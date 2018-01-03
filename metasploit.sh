@@ -56,7 +56,7 @@ termux-elf-cleaner /data/data/com.termux/files/usr/lib/ruby/gems/2.4.0/gems/pg-0
 echo "Creating database"
 
 cd $HOME/metasploit-framework/config
-curl -LO https://raw.githubusercontent.com/elusive94/Metasploit_In_Termux/master/database.yml
+curl -LO https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/database.yml
 
 mkdir -p $PREFIX/var/lib/postgresql
 initdb $PREFIX/var/lib/postgresql
