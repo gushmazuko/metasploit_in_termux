@@ -4,6 +4,7 @@ echo " "
 echo "Original source: https://github.com/Hax4us/Metasploit_termux"
 echo "##############################################"
 
+# Metasploit version
 msf_ver=4.16.18
 
 echo "WAIT UNTIL INSTALLING............" 
@@ -65,10 +66,8 @@ pg_ctl -D $PREFIX/var/lib/postgresql start
 createuser msf
 createdb msf_database
 
-echo "###############################"
+echo "####################################"
 echo "Thanx  To  Hax4us"
-echo "###############################"
-
 echo "####################################"
 echo " NOW YOU CAN LAUNCH METASPLOIT BY JUST EXECUTE THE COMMAND :=> msfconsole"
 echo "####################################"
