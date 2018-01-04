@@ -5,9 +5,9 @@
 ```bash
 pkg install git
 
-git clone https://github.com/elusive94/Metasploit_In_Termux.git
+git clone https://github.com/gushmazuko/metasploit_in_termux.git
 
-cd Metasploit_In_Termux
+cd metasploit_in_termux
 
 chmod +x metasploit.sh
 
