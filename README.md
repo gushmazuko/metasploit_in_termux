@@ -13,7 +13,7 @@ chmod +x metasploit.sh
 
 ./metasploit.sh
 ```
-# After install, run from terminal
+**After install, run from terminal**
 ```bash
 # Start postgresql
 ./postgresql_ctl.sh start
