@@ -12,9 +12,15 @@ cd metasploit_in_termux
 chmod +x metasploit.sh
 
 ./metasploit.sh
-
+```
 # After install, run from terminal
+```bash
+# Start postgresql
+./postgresql_ctl.sh start
+
+# And run msfconsole
 msfconsole
 ```
+
 
 > Original source: https://github.com/Hax4us/Metasploit_termux
