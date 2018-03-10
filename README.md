@@ -3,11 +3,7 @@
 **How to install:**
 
 ```bash
-pkg install git
-
-git clone https://github.com/gushmazuko/metasploit_in_termux.git
-
-cd metasploit_in_termux
+wget https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh
 
 chmod +x metasploit.sh
 
@@ -16,8 +12,7 @@ chmod +x metasploit.sh
 **After install, run from terminal**
 ```bash
 # Start postgresql
-chmod +x postgresql_ctl.sh
-./postgresql_ctl.sh start
+./postgresql_ctl.sh restart
 
 # And run msfconsole
 msfconsole
