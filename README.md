@@ -16,6 +16,7 @@ chmod +x metasploit.sh
 **After install, run from terminal**
 ```bash
 # Start postgresql
+chmod +x postgresql_ctl.sh
 ./postgresql_ctl.sh start
 
 # And run msfconsole
