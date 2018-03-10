@@ -5,7 +5,7 @@ echo "Original source: https://github.com/Hax4us/Metasploit_termux"
 echo "##############################################"
 
 # Metasploit version
-msf_ver=4.16.38
+msf_ver=4.16.44
 
 echo "WAIT UNTIL INSTALLING............" 
 
@@ -65,6 +65,10 @@ initdb $PREFIX/var/lib/postgresql
 pg_ctl -D $PREFIX/var/lib/postgresql start
 createuser msf
 createdb msf_database
+
+cd $HOME
+curl -LO https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/postgresql_ctl.sh
+chmod +x postgresql_ctl.sh
 
 echo "####################################"
 echo "Thanx  To  Hax4us"
