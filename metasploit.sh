@@ -5,7 +5,7 @@ echo "Original source: https://github.com/Hax4us/Metasploit_termux"
 echo "##############################################"
 
 # Metasploit version
-msf_ver=4.16.21
+msf_ver=4.16.44
 
 echo "WAIT UNTIL INSTALLING............" 
 
