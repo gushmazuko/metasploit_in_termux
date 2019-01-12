@@ -5,7 +5,7 @@ echo "Original source: https://github.com/Hax4us/Metasploit_termux"
 echo "##############################################"
 
 # Metasploit version
-msf_ver=4.17.14
+msf_ver=5.0.0
 
 echo "WAIT UNTIL INSTALLING............" 
 
@@ -42,6 +42,7 @@ gem install nokogiri -v 1.8.0 -- --use-system-libraries
 
 
 cd $HOME/metasploit-framework
+gem install actionpack -v '4.2.11' --source 'https:\\rubygems.org/'
 bundle install -j5
 $PREFIX/bin/find -type f -executable -exec termux-fix-shebang \{\} \;
 rm ./modules/auxiliary/gather/http_pdf_authors.rb
