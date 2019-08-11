@@ -2,7 +2,7 @@
 
 **How to install:**
 ```bash
-curl -s https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh|bash -s --
+bash <(curl -s https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
 ```
 OR
 ```bash
