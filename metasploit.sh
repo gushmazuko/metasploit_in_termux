@@ -5,20 +5,26 @@ echo "Original source: https://github.com/Hax4us/Metasploit_termux"
 echo "##############################################"
 
 # Metasploit version
-msf_ver=5.0.0
+msf_ver=5.0.40
 
 echo "WAIT UNTIL INSTALLING............" 
 
 echo "####################################"
-pkg install -y autoconf bison clang coreutils curl findutils git apr apr-util libffi-dev libgmp-dev libpcap-dev postgresql-dev readline-dev libsqlite-dev openssl-dev libtool libxml2-dev libxslt-dev ncurses-dev pkg-config postgresql wget make ruby-dev libgrpc-dev termux-tools ncurses-utils ncurses unzip zip tar postgresql termux-elf-cleaner
+pkg install -y autoconf bison clang coreutils curl findutils apr apr-util postgresql openssl readline libffi libgmp libpcap libsqlite libgrpc libtool libxml2 libxslt ncurses make ruby ncurses-utils ncurses git wget unzip zip tar termux-tools termux-elf-cleaner pkg-config
 pkg upgrade
 echo "####################################"
 
-echo "Downloading & Extracting....."
+echo "Fix ruby BigDecimal....."
+source <(curl -L https://github.com/termux/termux-packages/files/2912002/fix-ruby-bigdecimal.sh.txt)
+
+echo "\nDownloading & Extracting....."
 
 cd $HOME
 curl -LO https://github.com/rapid7/metasploit-framework/archive/$msf_ver.tar.gz
 tar -xf $HOME/$msf_ver.tar.gz
+
+echo "Erasing old metasploit folder....."
+rm -rf $HOME/metasploit-framework
 mv $HOME/metasploit-framework-$msf_ver $HOME/metasploit-framework
 rm $HOME/$msf_ver.tar.gz
 cd $HOME/metasploit-framework
@@ -42,7 +48,8 @@ gem install nokogiri -v 1.8.0 -- --use-system-libraries
 
 
 cd $HOME/metasploit-framework
-gem install actionpack -v '4.2.11' --source 'https:\\rubygems.org/'
+gem install actionpack
+bundle update activesupport
 bundle install -j5
 $PREFIX/bin/find -type f -executable -exec termux-fix-shebang \{\} \;
 rm ./modules/auxiliary/gather/http_pdf_authors.rb
