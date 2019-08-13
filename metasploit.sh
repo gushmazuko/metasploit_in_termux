@@ -17,7 +17,7 @@ echo "####################################"
 echo "Fix ruby BigDecimal....."
 source <(curl -L https://github.com/termux/termux-packages/files/2912002/fix-ruby-bigdecimal.sh.txt)
 
-echo "\nDownloading & Extracting....."
+echo -e "\nDownloading & Extracting....."
 
 cd $HOME
 curl -LO https://github.com/rapid7/metasploit-framework/archive/$msf_ver.tar.gz
