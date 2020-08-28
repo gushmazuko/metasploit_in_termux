@@ -1,8 +1,8 @@
-# Metasploit Framework 5 in Termux
+# Metasploit Framework 6 in Termux
 
 **How to install:**
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
+source <(curl -s https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
 ```
 OR
 ```bash
@@ -15,11 +15,8 @@ chmod +x metasploit.sh
 **After install, run from terminal**
 ```bash
 # Start postgresql
-./postgresql_ctl.sh restart
+./postgresql_ctl.sh start
 
 # And run msfconsole
 msfconsole
 ```
-
-
-> Original source: https://github.com/Hax4us/Metasploit_termux
