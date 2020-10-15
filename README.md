@@ -10,12 +10,13 @@ source <(curl -s https://kutt.it/msf)
 
 -apt install wget
 
--wget https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh
+- then download it type `wget https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh`
 
--chmod +x metasploit.sh
+- give it permission type`chmod +x metasploit.sh`
 
-./metasploit.sh
+- ./metasploit.sh
 ```
+Note- This process will take your 300-400 Mb of mobile data and storage
 ## After install, run from terminal
 ```bash
 # Start postgresql
