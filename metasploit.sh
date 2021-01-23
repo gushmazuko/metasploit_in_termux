@@ -1,11 +1,12 @@
 #!/data/data/com.termux/files/usr/bin/bash
+set -e
 # Forked from: https://github.com/Hax4us/Metasploit_termux
 clear
 echo "
     +-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+
     |M|e|t|a|s|p|l|o|i|t| |i|n| |T|e|r|m|u|x|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+
-            +-+-+ +-+-+-+-+-+-+-+-+-+-+
++-+-+ +-+-+-+-+-+-+-+-+-+-+
             |b|y| |G|u|s|h|m|a|z|u|k|o|
             +-+-+ +-+-+-+-+-+-+-+-+-+-+
 "
