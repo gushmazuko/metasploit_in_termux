@@ -1,0 +1,18 @@
+Package: ruby
+Architecture: i686
+Installed-Size: 23000
+Maintainer: gushmazuko <gushmazuko@protonmail.com>
+Version: 2.7.2-3
+Homepage: https://www.ruby-lang.org/
+Breaks: ruby-dev
+Depends: gdbm, libandroid-support, libffi, libgmp, readline, openssl, libyaml, zlib
+Recommends: clang, make, pkg-config
+Replaces: ruby-dev
+Description: Dynamic programming language with a focus on simplicity and productivity
+Filename: dists/gushmazuko/main/binary-i686/ruby_2.7.2-3_i686.deb
+Size: 4259850
+MD5Sum: 1245ffc8adead1ee56ff4e6edf1f5278
+SHA1: 4c85b7163ff9d3f3271a68948c438975f063988d
+SHA256: 57d502c547aa23d17287a5a15fb114cb1f60ff07868b23af1cabe4d93928e904
+SHA512: 678d954abafb6010896d2139e2d858f926537493351299611ea34a15eadeae2b3a3cec085a0ceb302163fd7d03dc7713d807750d3ac40bd61200832a6d1e21ae
+

@@ -2,11 +2,13 @@
 
 ![Metasploit 6 running](https://i.imgur.com/yLFQhvP.png)
 
-## How to install:
+## How to:
+### Auto
 ```bash
-source <(curl -s https://kutt.it/msf)
+source <(curl -fsSL https://kutt.it/msf)
 ```
-**Or manual**
+
+### Manual
 ```bash
 pkg install wget
 
@@ -16,11 +18,13 @@ chmod +x metasploit.sh
 
 ./metasploit.sh
 ```
-## After install, run from terminal
-```bash
-# Start postgresql
-./postgresql_ctl.sh start
 
-# And run msfconsole
+## After installation complete
+Start `postgresql`
+```bash
+./postgresql_ctl.sh start
+```
+And run `msfconsole`
+```bash
 msfconsole
 ```

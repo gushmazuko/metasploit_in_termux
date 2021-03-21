@@ -1,0 +1,18 @@
+Package: ruby
+Architecture: aarch64
+Installed-Size: 23080
+Maintainer: gushmazuko <gushmazuko@protonmail.com>
+Version: 2.7.2-3
+Homepage: https://www.ruby-lang.org/
+Breaks: ruby-dev
+Depends: gdbm, libandroid-support, libffi, libgmp, readline, openssl, libyaml, zlib
+Recommends: clang, make, pkg-config
+Replaces: ruby-dev
+Description: Dynamic programming language with a focus on simplicity and productivity
+Filename: dists/gushmazuko/main/binary-aarch64/ruby_2.7.2-3_aarch64.deb
+Size: 4092114
+MD5Sum: ab7a68c22f5e9a8cbbb57f7f830d2ffb
+SHA1: 7dc86f112c0b4343336aab78a9a0a43db5224d6a
+SHA256: 003d6f3ca92d74baf2ce15d1e2fe74b2040a8b70e8b6d24c1dfba60662c8845a
+SHA512: dfb57a11818b4904999f002c3f63cdc3a2abbf7f005fc588c3371669510df2838bafe77b67963299e6bf13ca0365dbee6acee6e88cc6ee10fe376d4543b55647
+

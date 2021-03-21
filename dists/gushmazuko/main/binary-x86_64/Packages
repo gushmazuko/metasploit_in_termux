@@ -1,0 +1,18 @@
+Package: ruby
+Architecture: x86_64
+Installed-Size: 23752
+Maintainer: gushmazuko <gushmazuko@protonmail.com>
+Version: 2.7.2-3
+Homepage: https://www.ruby-lang.org/
+Breaks: ruby-dev
+Depends: gdbm, libandroid-support, libffi, libgmp, readline, openssl, libyaml, zlib
+Recommends: clang, make, pkg-config
+Replaces: ruby-dev
+Description: Dynamic programming language with a focus on simplicity and productivity
+Filename: dists/gushmazuko/main/binary-x86_64/ruby_2.7.2-3_x86_64.deb
+Size: 4422574
+MD5Sum: 62e82526aa95944635d0000131ca46a0
+SHA1: 0a70d397b97a1f12da42e35a34d91d84c52de891
+SHA256: ac845634d517c9ebbce0eea89ce8f8cfa15920b7a0061b9c51799ca046ab366e
+SHA512: 1d4ef3a79abd3556e1d2aa8c9bd89473bb3d95dfd1c33580a5a0774f307569d3b858e88c85d0e58074be85d59596543cae1ca0b53278ecf86208fff41fe2cfbc
+
