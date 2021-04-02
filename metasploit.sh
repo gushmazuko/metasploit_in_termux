@@ -25,6 +25,7 @@ center "*** Dependencies installation..."
 # Add gushmazuko repository to install ruby 2.7.2 version
 echo 'deb https://github.com/gushmazuko/metasploit_in_termux/raw/master gushmazuko main'  | tee $PREFIX/etc/apt/sources.list.d/gushmazuko.list
 
+pkg install -y gnupg
 curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/gushmazuko-gpg.pubkey | gpg --dearmor | tee $PREFIX/etc/apt/trusted.gpg.d/gushmazuko-repo.gpg
 
 # Set low priority for all gushmazuko repository (for security purposes)
@@ -42,8 +43,6 @@ Pin-Priority: 1001' | tee $PREFIX/etc/apt/preferences.d/preferences
 # Purge installed ruby
 apt purge ruby -y
 rm -fr $PREFIX/lib/ruby/gems
-
-pkg install -y gnupg
 
 pkg upgrade -y -o Dpkg::Options::="--force-confnew"
 pkg install -y python autoconf bison clang coreutils curl findutils apr apr-util postgresql openssl readline libffi libgmp libpcap libsqlite libgrpc libtool libxml2 libxslt ncurses make ncurses-utils ncurses git wget unzip zip tar termux-tools termux-elf-cleaner pkg-config git ruby -o Dpkg::Options::="--force-confnew"
