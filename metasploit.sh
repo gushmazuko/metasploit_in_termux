@@ -61,7 +61,7 @@ rm -rf $HOME/metasploit-framework
 echo
 center "*** Downloading..."
 cd $HOME
-git clone https://github.com/rapid7/metasploit-framework.git
+git clone https://github.com/rapid7/metasploit-framework.git --depth=1
 
 echo
 center "*** Installation..."
@@ -76,7 +76,7 @@ gem install nokogiri -v 1.8.0 -- --use-system-libraries
 gem install actionpack
 bundle update activesupport
 bundle update --bundler
-bundle install -j5
+bundle install -j$(nproc --all)
 $PREFIX/bin/find -type f -executable -exec termux-fix-shebang \{\} \;
 rm ./modules/auxiliary/gather/http_pdf_authors.rb
 if [ -e $PREFIX/bin/msfconsole ];then
