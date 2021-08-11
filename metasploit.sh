@@ -22,6 +22,9 @@ source <(echo "c3Bpbm5lcj0oICd8JyAnLycgJy0nICdcJyApOwoKY291bnQoKXsKICBzcGluICYKI
 echo
 center "*** Dependencies installation..."
 
+# Remove not working repositories
+rm $PREFIX/etc/apt/sources.list.d/*
+
 # Add gushmazuko repository to install ruby 2.7.2 version
 echo 'deb https://github.com/gushmazuko/metasploit_in_termux/raw/master gushmazuko main'  | tee $PREFIX/etc/apt/sources.list.d/gushmazuko.list
 
