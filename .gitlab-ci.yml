@@ -11,6 +11,6 @@ test_job:
     - |
       export TERM=xterm
       uname -a
-      bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
+      bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/$CI_COMMIT_REF_NAME/metasploit.sh)
       msfconsole -v
   when: always
