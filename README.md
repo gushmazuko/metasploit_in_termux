@@ -2,7 +2,7 @@
 
 ![Metasploit 6 running](https://i.imgur.com/yLFQhvP.png)
 
-## How to:
+## How to Install
 ### Auto
 ```bash
 source <(curl -fsSL https://kutt.it/msf)
@@ -19,12 +19,8 @@ chmod +x metasploit.sh
 ./metasploit.sh
 ```
 
-## After installation complete
-Start `postgresql`
-```bash
-./postgresql_ctl.sh start
-```
-And run `msfconsole`
+## Launch metasploit
+After installation complete execute:
 ```bash
 msfconsole
 ```

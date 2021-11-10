@@ -1,0 +1,13 @@
+stages:
+  - test
+
+test_job:
+  stage: test
+  image: xeffyr/termux
+  before_script:
+    - pkg update
+  script:
+    - |
+      source <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
+      msfconsole -v
+  when: always

@@ -25,11 +25,14 @@ center "*** Dependencies installation..."
 # Remove not working repositories
 rm $PREFIX/etc/apt/sources.list.d/*
 
+# Install gnupg required to sign repository
+pkg install -y gnupg
+
+# Sign gushmazuko repository
+curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/gushmazuko-gpg.pubkey | gpg --dearmor | tee $PREFIX/etc/apt/trusted.gpg.d/gushmazuko-repo.gpg
+
 # Add gushmazuko repository to install ruby 2.7.2 version
 echo 'deb https://github.com/gushmazuko/metasploit_in_termux/raw/master gushmazuko main'  | tee $PREFIX/etc/apt/sources.list.d/gushmazuko.list
-
-pkg install -y gnupg
-curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/gushmazuko-gpg.pubkey | gpg --dearmor | tee $PREFIX/etc/apt/trusted.gpg.d/gushmazuko-repo.gpg
 
 # Set low priority for all gushmazuko repository (for security purposes)
 # Set highest priority for ruby package from gushmazuko repository
@@ -104,11 +107,7 @@ pg_ctl -D $PREFIX/var/lib/postgresql start
 createuser msf
 createdb msf_database
 
-cd $HOME
-curl -sLO https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/postgresql_ctl.sh
-chmod +x postgresql_ctl.sh
-
 echo
 center "*"
-echo -e "\033[32m Installation complete. \n To start msf database use: ./postgresql_ctl.sh start \n Launch metasploit by executing: msfconsole\033[0m"
+echo -e "\033[32m Installation complete. \n Launch metasploit by executing: msfconsole\033[0m"
 center "*"
