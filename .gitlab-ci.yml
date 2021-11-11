@@ -5,12 +5,11 @@ test_job:
   stage: test
   image: xeffyr/termux:x86_64
   before_script:
-    # - pkg update
     - export TERM=xterm
+    - pkg update -y
   script:
     - |
-      export TERM=xterm
-      uname -a
+      echo $CI_COMMIT_REF_NAME
       bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/$CI_COMMIT_REF_NAME/metasploit.sh)
       msfconsole -v
   when: always
