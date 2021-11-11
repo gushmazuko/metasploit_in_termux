@@ -80,15 +80,10 @@ sed 's|nokogiri (1.*)|nokogiri (1.8.0)|g' -i Gemfile.lock
 gem install nokogiri -v 1.8.0 -- --use-system-libraries
 
 gem install actionpack
-echo "line 83"
 bundle update activesupport
-echo "line 85"
 bundle update --bundler
-echo "line 87"
 bundle install -j$(nproc --all)
-echo "line 89"
 $PREFIX/bin/find -type f -executable -exec termux-fix-shebang \{\} \;
-echo "line 91"
 rm ./modules/auxiliary/gather/http_pdf_authors.rb
 if [ -e $PREFIX/bin/msfconsole ];then
 	rm $PREFIX/bin/msfconsole
@@ -98,7 +93,7 @@ if [ -e $PREFIX/bin/msfvenom ];then
 fi
 ln -s $HOME/metasploit-framework/msfconsole /data/data/com.termux/files/usr/bin/
 ln -s $HOME/metasploit-framework/msfvenom /data/data/com.termux/files/usr/bin/
-termux-elf-cleaner /data/data/com.termux/files/usr/lib/ruby/gems/2.4.0/gems/pg-0.20.0/lib/pg_ext.so
+termux-elf-cleaner /data/data/com.termux/files/usr/lib/ruby/gems/*/gems/pg-*/lib/pg_ext.so
 
 echo
 center "*"
