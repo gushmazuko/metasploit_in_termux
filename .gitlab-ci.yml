@@ -6,7 +6,7 @@ test_job:
   image: xeffyr/termux:x86_64
   before_script:
     - export TERM=xterm
-    - pkg update -y
+    - apt update -y
   script:
     - |
       echo $CI_COMMIT_REF_NAME
