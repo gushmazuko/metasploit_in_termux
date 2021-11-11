@@ -93,19 +93,7 @@ if [ -e $PREFIX/bin/msfvenom ];then
 fi
 ln -s $HOME/metasploit-framework/msfconsole /data/data/com.termux/files/usr/bin/
 ln -s $HOME/metasploit-framework/msfvenom /data/data/com.termux/files/usr/bin/
-termux-elf-cleaner /data/data/com.termux/files/usr/lib/ruby/gems/2.4.0/gems/pg-0.20.0/lib/pg_ext.so
-
-echo
-center "*** Database configuration..."
-cd $HOME/metasploit-framework/config
-curl -sLO https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/database.yml
-
-mkdir -p $PREFIX/var/lib/postgresql
-initdb $PREFIX/var/lib/postgresql
-
-pg_ctl -D $PREFIX/var/lib/postgresql start
-createuser msf
-createdb msf_database
+termux-elf-cleaner /data/data/com.termux/files/usr/lib/ruby/gems/*/gems/pg-*/lib/pg_ext.so
 
 echo
 center "*"

@@ -3,11 +3,13 @@ stages:
 
 test_job:
   stage: test
-  image: xeffyr/termux
-  # before_script:
-  #   - pkg update
+  image: xeffyr/termux:x86_64
+  before_script:
+    - export TERM=xterm
+    - apt update -y
   script:
     - |
-      source <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
+      echo $CI_COMMIT_REF_NAME
+      bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/$CI_COMMIT_REF_NAME/metasploit.sh)
       msfconsole -v
   when: always
