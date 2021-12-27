@@ -5,8 +5,10 @@ echo "
     |M|e|t|a|s|p|l|o|i|t| |i|n| |T|e|r|m|u|x|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+
             +-+-+ +-+-+-+-+-+-+-+-+-+-+
-            |b|y| |G|u|s|h|m|a|z|u|k|o|
+            |b|y| |R|a|k|h|i|l|u|k|k|y|
             +-+-+ +-+-+-+-+-+-+-+-+-+-+
+	    |b|y| |G|u|s|h|m|a|z|u|k|o|
+	    {make center mode due you can change this your code is not working. { make out}9 id|{}++35481} _)solcrs{make} follow owner{ad} monikt{ relese error} {type_\msfconsole.sh}
 "
 
 center() {
