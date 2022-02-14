@@ -3,7 +3,7 @@ stages:
 
 test_job:
   stage: test
-  image: xeffyr/termux:x86_64
+  image: kcubeterm/termux:x86_64
   before_script:
     - export TERM=xterm
     - apt update -y
