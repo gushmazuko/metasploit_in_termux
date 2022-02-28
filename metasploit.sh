@@ -74,6 +74,19 @@ center "*** Installation..."
 cd $HOME/metasploit-framework
 sed '/rbnacl/d' -i Gemfile.lock
 sed '/rbnacl/d' -i metasploit-framework.gemspec
+
+# version 0.118
+# root cause for this problem is missing net-smtp & mini_portile2 version
+
+# Some warnings still occurs but works 
+
+echo 
+center "《《《  MSF FIX 》》》"
+
+export MSF_FIX="spec.add_runtime_dependency 'net-smtp'"
+sed -i "146i \  $MSF_FIX" metasploit-framework.gemspec
+sed -i "277,\$ s/2.8.0/2.2.0/" Gemfile.lock
+
 gem install bundler
 sed 's|nokogiri (1.*)|nokogiri (1.8.0)|g' -i Gemfile.lock
 
