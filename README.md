@@ -25,3 +25,6 @@ After installation complete execute:
 ```bash
 msfconsole
 ```
+
+## Bug fixed
+ for termux 0.118
