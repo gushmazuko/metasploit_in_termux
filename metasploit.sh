@@ -78,7 +78,7 @@ sed '/rbnacl/d' -i metasploit-framework.gemspec
 # version 0.118
 # root cause for this problem is missing net-smtp & mini_portile2 version
 
-# Some warnings still occurs but works 
+# Soon Warnings will be fixed ⚠️
 
 echo 
 center "《《《  MSF FIX 》》》"
