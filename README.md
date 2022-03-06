@@ -4,6 +4,14 @@
 ![Metasploit 6 running](https://i.imgur.com/yLFQhvP.png)
 
 ## How to Install
+## Before
+
+In order to have updated Termux:
+- **Purge all data** of Termux in Android Settings
+- Uninstall and reinstall latest Termux version from [F-Droid](https://f-droid.org/en/packages/com.termux/) (Version on Play Store is outdated)
+- Then launch Termux to initialization, close it (force stop, not swap)
+- Reopen and follow the instructions below
+
 ### Auto
 ```bash
 source <(curl -fsSL https://kutt.it/msf)
@@ -13,7 +21,8 @@ source <(curl -fsSL https://kutt.it/msf)
 ```bash
 pkg install wget
 
-wget https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh
+wget https://github.com/gushmazuko/metasploit_in_termux/blob/master/metasploit.sh
+
 
 chmod +x metasploit.sh
 
@@ -24,12 +33,3 @@ chmod +x metasploit.sh
 After installation complete execute:
 ```bash
 msfconsole
-```
-
-## What's New
- 
- BUG FIXED
- for termux 0.118
- 
- 
-##
