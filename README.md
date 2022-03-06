@@ -30,3 +30,6 @@ msfconsole
  
  BUG FIXED
  for termux 0.118
+ 
+ 
+##
