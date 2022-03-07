@@ -14,15 +14,14 @@ In order to have updated Termux:
 
 ### Auto
 ```bash
-source <(curl -fsSL https://kutt.it/msf)
+source <(curl -fsSL https://bit.ly/36UvNhV)
 ```
 
 ### Manual
 ```bash
 pkg install wget
 
-wget https://github.com/gushmazuko/metasploit_in_termux/blob/master/metasploit.sh
-
+wget https://github.com/dedshit/metasploit_in_termux/blob/master/metasploit.sh
 
 chmod +x metasploit.sh
 
@@ -33,4 +32,3 @@ chmod +x metasploit.sh
 After installation complete execute:
 ```bash
 msfconsole
-```
