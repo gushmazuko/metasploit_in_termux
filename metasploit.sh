@@ -4,9 +4,9 @@ echo "
     +-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+
     |M|e|t|a|s|p|l|o|i|t| |i|n| |T|e|r|m|u|x|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+
-            +-+-+ +-+-+-+-+-+-+-+-+-+-+
-            |b|y| |G|u|s|h|m|a|z|u|k|o|
-            +-+-+ +-+-+-+-+-+-+-+-+-+-+
+                +-+-+ +-+-+-+-+-+-+-+
+     BUG FIXED  |b|y| |D|E|D|S|H|I|T|
+                +-+-+ +-+-+-+-+-+-+-+
 "
 
 center() {
@@ -78,7 +78,7 @@ sed '/rbnacl/d' -i metasploit-framework.gemspec
 # version 0.118
 # root cause for this problem is missing net-smtp & mini_portile2 version
 
-# Soon Warnings will be fixed ⚠️
+# Warnings were fixed 
 
 echo 
 center "《《《  MSF FIX 》》》"
