@@ -74,6 +74,14 @@ center "*** Installation..."
 cd $HOME/metasploit-framework
 sed '/rbnacl/d' -i Gemfile.lock
 sed '/rbnacl/d' -i metasploit-framework.gemspec
+
+echo 
+center "《《《  MSF FIX 》》》"
+
+export MSF_FIX="spec.add_runtime_dependency 'net-smtp'"
+sed -i "146i \  $MSF_FIX" metasploit-framework.gemspec
+sed -i "277,\$ s/2.8.0/2.2.0/" Gemfile.lock
+
 gem install bundler
 sed 's|nokogiri (1.*)|nokogiri (1.8.0)|g' -i Gemfile.lock
 
@@ -94,6 +102,16 @@ fi
 ln -s $HOME/metasploit-framework/msfconsole /data/data/com.termux/files/usr/bin/
 ln -s $HOME/metasploit-framework/msfvenom /data/data/com.termux/files/usr/bin/
 termux-elf-cleaner /data/data/com.termux/files/usr/lib/ruby/gems/*/gems/pg-*/lib/pg_ext.so
+
+echo
+center "*"
+echo -e "\033[32m Suppressing Warnings\033[0m"
+
+sed -i '355 s/::Exception, //' $PREFIX/bin/msfvenom
+sed -i '481, 483 {s/^/#/}' $PREFIX/bin/msfvenom
+sed -Ei "s/(\^\\\c\s+)/(\^\\\C-\\\s)/" /data/data/com.termux/files/home/metasploit-framework/lib/msf/core/exploit/remote/vim_soap.rb
+sed -i '86 {s/^/#/};96 {s/^/#/}' /data/data/com.termux/files/usr/lib/ruby/gems/3.1.0/gems/concurrent-ruby-1.0.5/lib/concurrent/atomic/ruby_thread_local_var.rb
+sed -i '442, 476 {s/^/#/};436, 438 {s/^/#/}' /data/data/com.termux/files/usr/lib/ruby/gems/3.1.0/gems/logging-2.3.0/lib/logging/diagnostic_context.rb
 
 echo
 center "*"
