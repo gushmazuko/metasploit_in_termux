@@ -22,33 +22,10 @@ source <(echo "c3Bpbm5lcj0oICd8JyAnLycgJy0nICdcJyApOwoKY291bnQoKXsKICBzcGluICYKI
 echo
 center "*** Dependencies installation..."
 
-# Remove not working repositories
-rm $PREFIX/etc/apt/sources.list.d/*
-
-# Install gnupg required to sign repository
-pkg install -y gnupg
-
-# Sign gushmazuko repository
-curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/gushmazuko-gpg.pubkey | gpg --dearmor | tee $PREFIX/etc/apt/trusted.gpg.d/gushmazuko-repo.gpg
-
-# Add gushmazuko repository to install ruby 2.7.2 version
-echo 'deb https://github.com/gushmazuko/metasploit_in_termux/raw/master gushmazuko main'  | tee $PREFIX/etc/apt/sources.list.d/gushmazuko.list
-
-# Set low priority for all gushmazuko repository (for security purposes)
-# Set highest priority for ruby package from gushmazuko repository
-echo '## Set low priority for all gushmazuko repository (for security purposes)
-Package: *
-Pin: release gushmazuko
-Pin-Priority: 100
-
-## Set highest priority for ruby package from gushmazuko repository
-Package: ruby
-Pin: release gushmazuko
-Pin-Priority: 1001' | tee $PREFIX/etc/apt/preferences.d/preferences
 
 # Purge installed ruby
 apt purge ruby -y
-rm -fr $PREFIX/lib/ruby/gems
+rm -rf $PREFIX/lib/ruby
 
 pkg upgrade -y -o Dpkg::Options::="--force-confnew"
 pkg install -y python autoconf bison clang coreutils curl findutils apr apr-util postgresql openssl readline libffi libgmp libpcap libsqlite libgrpc libtool libxml2 libxslt ncurses make ncurses-utils ncurses git wget unzip zip tar termux-tools termux-elf-cleaner pkg-config git ruby -o Dpkg::Options::="--force-confnew"
@@ -78,13 +55,17 @@ sed '/rbnacl/d' -i metasploit-framework.gemspec
 # version 0.118
 # root cause for this problem is missing net-smtp & mini_portile2 version
 
+# edit: they added net-smtp in gemspec
+
 # Warnings were fixed 
 
 echo 
 center "《《《  MSF FIX 》》》"
 
-export MSF_FIX="spec.add_runtime_dependency 'net-smtp'"
-sed -i "146i \  $MSF_FIX" metasploit-framework.gemspec
+# looks like someone added this in gemspec 
+# hereafter no need to add thus dependency :D
+#export MSF_FIX="spec.add_runtime_dependency 'net-smtp'"
+#sed -i "146i \  $MSF_FIX" metasploit-framework.gemspec
 sed -i "277,\$ s/2.8.0/2.2.0/" Gemfile.lock
 
 gem install bundler
