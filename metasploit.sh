@@ -62,24 +62,19 @@ source <(curl -sL https://github.com/termux/termux-packages/files/2912002/fix-ru
 
 echo
 center "*** Erasing old metasploit folder..."
-rm -rf $HOME/metasploit-framework
+rm -rf $PREFIX/opt/metasploit-framework
 
 echo
 center "*** Downloading..."
-cd $HOME
+cd $PREFIX/opt
 git clone https://github.com/rapid7/metasploit-framework.git --depth=1
 
 echo
 center "*** Installation..."
-cd $HOME/metasploit-framework
+cd $PREFIX/opt/metasploit-framework
 sed '/rbnacl/d' -i Gemfile.lock
 sed '/rbnacl/d' -i metasploit-framework.gemspec
 
-echo 
-center "《《《  MSF FIX 》》》"
-
-export MSF_FIX="spec.add_runtime_dependency 'net-smtp'"
-sed -i "146i \  $MSF_FIX" metasploit-framework.gemspec
 sed -i "277,\$ s/2.8.0/2.2.0/" Gemfile.lock
 
 gem install bundler
@@ -99,9 +94,9 @@ fi
 if [ -e $PREFIX/bin/msfvenom ];then
 	rm $PREFIX/bin/msfvenom
 fi
-ln -s $HOME/metasploit-framework/msfconsole /data/data/com.termux/files/usr/bin/
-ln -s $HOME/metasploit-framework/msfvenom /data/data/com.termux/files/usr/bin/
-termux-elf-cleaner /data/data/com.termux/files/usr/lib/ruby/gems/*/gems/pg-*/lib/pg_ext.so
+ln -s $PREFIX/opt/metasploit-framework/msfconsole $PREFIX/bin/
+ln -s $PREFIX/opt/metasploit-framework/msfvenom $PREFIX/bin/
+termux-elf-cleaner $PREFIX/lib/ruby/gems/*/gems/pg-*/lib/pg_ext.so
 
 echo
 center "*"
@@ -109,9 +104,14 @@ echo -e "\033[32m Suppressing Warnings\033[0m"
 
 sed -i '355 s/::Exception, //' $PREFIX/bin/msfvenom
 sed -i '481, 483 {s/^/#/}' $PREFIX/bin/msfvenom
-sed -Ei "s/(\^\\\c\s+)/(\^\\\C-\\\s)/" /data/data/com.termux/files/home/metasploit-framework/lib/msf/core/exploit/remote/vim_soap.rb
-sed -i '86 {s/^/#/};96 {s/^/#/}' /data/data/com.termux/files/usr/lib/ruby/gems/3.1.0/gems/concurrent-ruby-1.0.5/lib/concurrent/atomic/ruby_thread_local_var.rb
-sed -i '442, 476 {s/^/#/};436, 438 {s/^/#/}' /data/data/com.termux/files/usr/lib/ruby/gems/3.1.0/gems/logging-2.3.0/lib/logging/diagnostic_context.rb
+sed -Ei "s/(\^\\\c\s+)/(\^\\\C-\\\s)/" $PREFIX/opt/metasploit-framework/lib/msf/core/exploit/remote/vim_soap.rb
+sed -i '86 {s/^/#/};96 {s/^/#/}' $PREFIX/lib/ruby/gems/3.1.0/gems/concurrent-ruby-1.0.5/lib/concurrent/atomic/ruby_thread_local_var.rb
+sed -i '442, 476 {s/^/#/};436, 438 {s/^/#/}' $PREFIX/lib/ruby/gems/3.1.0/gems/logging-2.3.0/lib/logging/diagnostic_context.rb
+
+sed -i '13,15 {s/^/#/}' $PREFIX/lib/ruby/gems/3.1.0/gems/hrr_rb_ssh-0.4.2/lib/hrr_rb_ssh/transport/encryption_algorithm/functionable.rb
+sed -i '14 {s/^/#/}' $PREFIX/lib/ruby/gems/3.1.0/gems/hrr_rb_ssh-0.4.2/lib/hrr_rb_ssh/transport/server_host_key_algorithm/ecdsa_sha2_nistp256.rb
+sed -i '14 {s/^/#/}' $PREFIX/lib/ruby/gems/3.1.0/gems/hrr_rb_ssh-0.4.2/lib/hrr_rb_ssh/transport/server_host_key_algorithm/ecdsa_sha2_nistp384.rb
+sed -i '14 {s/^/#/}' $PREFIX/lib/ruby/gems/3.1.0/gems/hrr_rb_ssh-0.4.2/lib/hrr_rb_ssh/transport/server_host_key_algorithm/ecdsa_sha2_nistp521.rb
 
 echo
 center "*"
