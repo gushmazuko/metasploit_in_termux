@@ -3,7 +3,7 @@ stages:
 
 test_job:
   stage: test
-  image: kcubeterm/termux:x86_64
+  image: termux/termux-docker:x86_64
   before_script:
     - export TERM=xterm
     - apt update -y
