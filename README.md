@@ -34,3 +34,8 @@ After installation complete execute:
 ```bash
 msfconsole
 ```
+
+## Update metasploit
+```bash
+msfupdate
+```
