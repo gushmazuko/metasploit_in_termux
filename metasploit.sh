@@ -86,6 +86,7 @@ gem install actionpack
 bundle update activesupport
 bundle update --bundler
 bundle install -j$(nproc --all)
+
 $PREFIX/bin/find -type f -executable -exec termux-fix-shebang \{\} \;
 # rm ./modules/auxiliary/gather/http_pdf_authors.rb
 if [ -e $PREFIX/bin/msfconsole ];then
@@ -94,8 +95,13 @@ fi
 if [ -e $PREFIX/bin/msfvenom ];then
 	rm $PREFIX/bin/msfvenom
 fi
+if [ -e $PREFIX/bin/msfrpcd ];then
+	rm $PREFIX/bin/msfrpcd
+fi
 ln -s $PREFIX/opt/metasploit-framework/msfconsole $PREFIX/bin/
 ln -s $PREFIX/opt/metasploit-framework/msfvenom $PREFIX/bin/
+ln -s $PREFIX/opt/metasploit-framework/msfrpcd $PREFIX/bin/
+
 termux-elf-cleaner $PREFIX/lib/ruby/gems/*/gems/pg-*/lib/pg_ext.so
 
 echo
