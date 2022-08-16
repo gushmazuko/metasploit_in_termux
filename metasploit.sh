@@ -97,14 +97,10 @@ if [ -e $PREFIX/bin/msfvenom ];then
 fi
 if [ -e $PREFIX/bin/msfrpcd ];then
 	rm $PREFIX/bin/msfrpcd
-fi 
- if [ -e $PREFIX/bin/msfupdate ];then 
-         rm $PREFIX/bin/msfupdate
 fi
 ln -s $PREFIX/opt/metasploit-framework/msfconsole $PREFIX/bin/
 ln -s $PREFIX/opt/metasploit-framework/msfvenom $PREFIX/bin/
 ln -s $PREFIX/opt/metasploit-framework/msfrpcd $PREFIX/bin/
-ln -s $PREFIX/opt/metasploit-framework/msfupdate $PREFIX/bin/
 
 termux-elf-cleaner $PREFIX/lib/ruby/gems/*/gems/pg-*/lib/pg_ext.so
 
