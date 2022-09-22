@@ -75,12 +75,17 @@ cd $PREFIX/opt/metasploit-framework
 # sed '/rbnacl/d' -i Gemfile.lock
 # sed '/rbnacl/d' -i metasploit-framework.gemspec
 
-sed -i "277,\$ s/2.8.0/2.2.0/" Gemfile.lock
+#No need to downgrade mini_portile2 
+#sed -i "277,\$ s/2.8.0/2.2.0/" Gemfile.lock
 
 gem install bundler
-sed 's|nokogiri (1.*)|nokogiri (1.8.0)|g' -i Gemfile.lock
 
-gem install nokogiri -v 1.8.0 -- --use-system-libraries
+#sed 's|nokogiri (1.*)|nokogiri (1.8.0)|g' -i Gemfile.lock
+
+# Extract nokogiri version from  Gemfile.lock
+declare NOKOGIRI_VERSION=$(cat Gemfile.lock | grep -i nokogiri | sed 's/nokogiri [\(\)]/(/g' | cut -d ' ' -f 5 | grep -oP "(.).[[:digit:]][\w+]?[.].")
+
+gem install nokogiri -v "$NOKOGIRI_VERSION" -- --use-system-libraries
 
 gem install actionpack
 bundle update activesupport
