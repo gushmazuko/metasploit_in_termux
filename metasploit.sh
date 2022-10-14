@@ -1,4 +1,23 @@
 #!/data/data/com.termux/files/usr/bin/bash
+reset='\033[0m'
+exit_on_signal_SIGINT() {
+echo ""
+clear
+echo -e " Program Interrupted. ${reset}"
+sleep 3
+clear
+exit 0
+}
+exit_on_signal_SIGTERM() {
+echo ""
+clear
+echo -e " Program Interrupted. ${reset}"
+sleep 3
+clear
+exit 0
+}
+trap exit_on_signal_SIGINT SIGINT
+trap exit_on_signal_SIGTERM SIGTERM
 clear
 echo "
     +-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+
@@ -18,6 +37,14 @@ center() {
 # Loading spinner
 center " Loading..."
 source <(echo "c3Bpbm5lcj0oICd8JyAnLycgJy0nICdcJyApOwoKY291bnQoKXsKICBzcGluICYKICBwaWQ9JCEKICBmb3IgaSBpbiBgc2VxIDEgMTBgCiAgZG8KICAgIHNsZWVwIDE7CiAgZG9uZQoKICBraWxsICRwaWQgIAp9CgpzcGluKCl7CiAgd2hpbGUgWyAxIF0KICBkbyAKICAgIGZvciBpIGluICR7c3Bpbm5lcltAXX07IAogICAgZG8gCiAgICAgIGVjaG8gLW5lICJcciRpIjsKICAgICAgc2xlZXAgMC4yOwogICAgZG9uZTsKICBkb25lCn0KCmNvdW50" | base64 -d)
+apt remove -y ruby >/dev/null 2>&1
+apt install -y libiconv zlib autoconf bison clang coreutils curl findutils git apr apr-util libffi libgmp libpcap postgresql readline libsqlite openssl libtool libxml2 libxslt ncurses pkg-config wget make libgrpc termux-tools ncurses-utils ncurses unzip zip tar termux-elf-cleaner > /dev/null 2>&1
+sleep 1
+pkg install ruby -y
+pkg install ruby
+pkg install wget -y
+pkg install wget
+pkg install python -y
 
 echo
 center "*** Dependencies installation..."
@@ -81,7 +108,7 @@ cd $PREFIX/opt/metasploit-framework
 # sed '/rbnacl/d' -i metasploit-framework.gemspec
 
 #sed -i "277,\$ s/2.8.0/2.2.0/" Gemfile.lock
-
+gem install bundler -v 2.2.4
 gem install bundler
 declare NOKOGIRI_VERSION=$(cat Gemfile.lock | grep -i nokogiri | sed 's/nokogiri [\(\)]/(/g' | cut -d ' ' -f 5 | grep -oP "(.).[[:digit:]][\w+]?[.].")
 #sed 's|nokogiri (1.*)|nokogiri (1.8.0)|g' -i Gemfile.lock
