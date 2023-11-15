@@ -6,10 +6,25 @@ test_job:
   image: termux/termux-docker:x86_64
   before_script:
     - export TERM=xterm
+    - |
+      echo "Checking DNS readiness..."
+      max_attempts=$((2 * 60 / 5))
+      attempt=1
+      while [ $attempt -le $max_attempts ]; do
+          if curl -Is https://termux.dev > /dev/null; then
+              echo "DNS is ready and HTTP request to Termux was successful."
+              break
+          else
+              if [ $attempt -eq $max_attempts ]; then
+                  echo "Timeout reached. DNS is still not ready."
+                  exit 1
+              fi
+              attempt=$((attempt + 1))
+              sleep 5
+          fi
+      done
     - apt update -y
   script:
-    - |
-      echo $CI_COMMIT_REF_NAME
-      bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/$CI_COMMIT_REF_NAME/metasploit.sh)
-      msfconsole -v
-  when: always
+    - bash <(curl -fsSL https://gitlab.com/gushmazuko/metasploit_in_termux/-/raw/${CI_COMMIT_REF_NAME}/metasploit.sh)
+    - msfconsole -v
+  when: manual

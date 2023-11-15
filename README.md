@@ -30,7 +30,7 @@ chmod +x metasploit.sh
 ```
 
 ## Launch metasploit
-After installation complete execute:
+After installation start Metasploit using the command:
 ```bash
 msfconsole
 ```
