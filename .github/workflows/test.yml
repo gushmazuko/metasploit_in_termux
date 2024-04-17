@@ -48,7 +48,7 @@ jobs:
 
       - name: Update packages
         run: |
-          sudo apt-get update -y
+          apt update -y
 
       - name: Run the metasploit installation script and check msfconsole version
         run: |
