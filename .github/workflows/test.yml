@@ -14,8 +14,14 @@ jobs:
       options: --user root
 
     steps:
+      - name: investigate
+        run: |
+          pwd
+          whoami
+          ls -la
+          id -u
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set environment variables
         run: |
