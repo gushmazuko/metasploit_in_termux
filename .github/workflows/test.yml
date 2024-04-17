@@ -10,7 +10,7 @@ jobs:
          - name: wait dns
            run: |
               echo "Checking DNS readiness..."
-              max_attempts=$((2 * 60 / 5))
+              max_attempts=$((60 * 60 / 5))
               attempt=1
               while [ $attempt -le $max_attempts ]; do
                   if curl -Is https://termux.dev > /dev/null; then
