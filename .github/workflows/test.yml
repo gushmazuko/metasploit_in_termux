@@ -14,14 +14,14 @@ jobs:
       options: --user root
 
     steps:
-      - name: investigate
-        run: |
-          pwd
-          whoami
-          ls -la
-          id -u
-      - name: Checkout Code
-        uses: actions/checkout@v2
+      # - name: investigate
+      #   run: |
+      #     pwd
+      #     whoami
+      #     ls -la
+      #     id -u
+      # - name: Checkout Code
+      #   uses: actions/checkout@v2
 
       - name: Set environment variables
         run: |
@@ -52,7 +52,7 @@ jobs:
 
       - name: Run the metasploit installation script and check msfconsole version
         run: |
-          ./metasploit.sh
+           bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh)
 
       - name: Verify Metasploit version
         run: |
