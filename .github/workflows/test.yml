@@ -9,7 +9,6 @@ jobs:
     steps:
          - name: Log the node version
            run: |
-             node -v
              cat /etc/os-release
              curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
              bash metasploit.sh
