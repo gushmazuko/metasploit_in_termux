@@ -6,8 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: termux/termux-docker:x86_64
-      options: --entrypoint /entrypoint_root.sh
+      options: --user root --entrypoint /entrypoint_root.sh
     steps:
+         - name: check resolv
+           run: cat $PREFIX/etc/resolv.conf
          - name: wait dns
            run: |
               echo "Checking DNS readiness..."
