@@ -6,18 +6,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  test_job:
-    runs-on: ubuntu-latest
-    container:
-      image: termux/termux-docker:x86_64
+  test:
+    runs-on: ubuntu-latest  # Using a GitHub-hosted runner
+
+    services:
+      docker:
+        image: termux/termux-docker:x86_64
+        options: --privileged
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set environment
+      - name: Set environment variables
         run: |
-          export TERM=xterm
+          echo "TERM=xterm" >> $GITHUB_ENV
+
+      - name: Check DNS readiness
+        run: |
           echo "Checking DNS readiness..."
           max_attempts=$((2 * 60 / 5))
           attempt=1
@@ -36,10 +42,14 @@ jobs:
           done
 
       - name: Update packages
-        run: apt update -y
+        run: |
+          apt-get update -y
 
-      - name: Execute script
-        run: ./metasploit.sh
+      - name: Run the metasploit installation script and check msfconsole version
+        run: |
+          ./metasploit.sh
+          msfconsole -v
 
       - name: Verify Metasploit version
-        run: msfconsole -v
+        run: |
+          msfconsole -v
