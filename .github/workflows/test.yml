@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: termux/termux-docker:x86_64
+      options: --entrypoint /entrypoint_root.sh
     steps:
          - name: wait dns
            run: |
