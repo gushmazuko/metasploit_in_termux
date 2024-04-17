@@ -1,0 +1,43 @@
+name: CI
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  test_job:
+    runs-on: ubuntu-latest
+    container:
+      image: termux/termux-docker:x86_64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set environment
+        run: |
+          export TERM=xterm
+          echo "Checking DNS readiness..."
+          max_attempts=$((2 * 60 / 5))
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+              if curl -Is https://termux.dev > /dev/null; then
+                  echo "DNS is ready and HTTP request to Termux was successful."
+                  break
+              else
+                  if [ $attempt -eq $max_attempts ]; then
+                      echo "Timeout reached. DNS is still not ready."
+                      exit 1
+                  fi
+                  attempt=$((attempt + 1))
+                  sleep 5
+              fi
+          done
+
+      - name: Update packages
+        run: apt update -y
+
+      - name: Execute script
+        run: ./metasploit.sh
+
+      - name: Verify Metasploit version
+        run: msfconsole -v
