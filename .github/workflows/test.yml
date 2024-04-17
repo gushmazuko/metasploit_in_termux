@@ -7,8 +7,27 @@ jobs:
     container:
       image: termux/termux-docker:x86_64
     steps:
+         - name: wait dns
+           run: |
+            - |
+              echo "Checking DNS readiness..."
+              max_attempts=$((2 * 60 / 5))
+              attempt=1
+              while [ $attempt -le $max_attempts ]; do
+                  if curl -Is https://termux.dev > /dev/null; then
+                      echo "DNS is ready and HTTP request to Termux was successful."
+                      break
+                  else
+                      if [ $attempt -eq $max_attempts ]; then
+                          echo "Timeout reached. DNS is still not ready."
+                          exit 1
+                      fi
+                      attempt=$((attempt + 1))
+                      sleep 5
+                  fi
+              done
          - name: Log the node version
            run: |
-             uname -a
-             curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
-             bash metasploit.sh
+              uname -a
+              curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
+              bash metasploit.sh
