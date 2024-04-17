@@ -1,21 +1,15 @@
-name: CI
-
-on:
-  push:
-  pull_request:
-  workflow_dispatch:
+name: container
+on: push
 
 jobs:
-  test-git-config:
-    runs-on: ubuntu-22.04
-    container: termux/termux-docker:x86_64
-
+  node-docker:
+    runs-on: ubuntu-latest
+    container:
+      image: termux/termux-docker:x86_64
     steps:
-      - name: Install Git CLI
-        run: |
-          apt update -y
-          apt install git curl -y
-      - name: Execute msf install
-        run: |
-          curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
-          bash metasploit.sh
+         - name: Log the node version
+           run: |
+             node -v
+             cat /etc/os-release
+             curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
+             bash metasploit.sh
