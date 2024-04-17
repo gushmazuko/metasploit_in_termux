@@ -9,7 +9,6 @@ jobs:
     steps:
          - name: wait dns
            run: |
-            - |
               echo "Checking DNS readiness..."
               max_attempts=$((2 * 60 / 5))
               attempt=1
