@@ -4,10 +4,15 @@ on: push
 jobs:
   node-docker:
     runs-on: ubuntu-latest
-    container:
-      image: termux/termux-docker:x86_64
-      options: --user root --entrypoint /entrypoint_root.sh
+    # container:
+    #   image: termux/termux-docker:x86_64
+    #   options: --user root --entrypoint /entrypoint_root.sh
     steps:
+         - name: test docker
+           run: |
+              docker run -it --rm ubuntu bash
+              apt update
+              apt install curl -y
          - name: check resolv
            run: cat $PREFIX/etc/resolv.conf
          - name: wait dns
