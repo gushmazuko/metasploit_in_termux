@@ -11,6 +11,7 @@ jobs:
 
     container:
       image: termux/termux-docker:x86_64
+      options: --user root
 
     steps:
       - name: Checkout Code
@@ -46,7 +47,6 @@ jobs:
       - name: Run the metasploit installation script and check msfconsole version
         run: |
           ./metasploit.sh
-          msfconsole -v
 
       - name: Verify Metasploit version
         run: |
