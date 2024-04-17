@@ -9,10 +9,8 @@ jobs:
   test:
     runs-on: ubuntu-latest  # Using a GitHub-hosted runner
 
-    services:
-      docker:
-        image: termux/termux-docker:x86_64
-        options: --privileged
+    container:
+      image: termux/termux-docker:x86_64
 
     steps:
       - name: Checkout Code
