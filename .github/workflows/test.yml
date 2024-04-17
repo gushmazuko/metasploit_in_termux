@@ -12,22 +12,7 @@ jobs:
            run: cat $PREFIX/etc/resolv.conf
          - name: wait dns
            run: |
-              echo "Checking DNS readiness..."
-              max_attempts=$((60 * 60 / 5))
-              attempt=1
-              while [ $attempt -le $max_attempts ]; do
-                  if curl -Is https://termux.dev > /dev/null; then
-                      echo "DNS is ready and HTTP request to Termux was successful."
-                      break
-                  else
-                      if [ $attempt -eq $max_attempts ]; then
-                          echo "Timeout reached. DNS is still not ready."
-                          exit 1
-                      fi
-                      attempt=$((attempt + 1))
-                      sleep 5
-                  fi
-              done
+              ping -c 4 1.1.1.1
          - name: Log the node version
            run: |
               uname -a
