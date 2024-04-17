@@ -15,4 +15,4 @@ jobs:
         run: |
           apt-get update
           apt-get install git curl -y
-          bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh)
+          source <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh)
