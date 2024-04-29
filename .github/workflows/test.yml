@@ -50,8 +50,8 @@ jobs:
   setup-metasploit:
     needs: checkout-dns
     runs-on: ubuntu-latest
-    container:
-      image: termux/termux-docker:x86_64
+    # container:
+    #   image: termux/termux-docker:x86_64
 
     steps:
     - name: Download hosts file
