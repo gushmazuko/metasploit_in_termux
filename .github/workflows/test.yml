@@ -50,9 +50,9 @@ jobs:
   setup-metasploit:
     needs: checkout-dns
     runs-on: ubuntu-latest
-    container:
-      image: termux/termux-docker:x86_64
-      options: --privileged
+    # container:
+    #   image: termux/termux-docker:x86_64
+    #   options: --privileged --cap-add=cap_net_admin
 
     steps:
     # - name: Download hosts file
@@ -62,43 +62,24 @@ jobs:
     #     path: .
 
     # - name: Checkout repository
-    #   uses: actions/checkout@v3
+    #   uses: actions/checkout@v1
 
-    - name: Set terminal environment variable
-      run: export TERM=xterm
+    # - name: Set terminal environment variable
+    #   run: export TERM=xterm
 
     - name: Install dependencies
       run: |
-        tee -a /system/etc/hosts > /dev/null << EOF
+        tee -a ./hosts > /dev/null << EOF
         5.75.242.194 packages.termux.dev
         185.199.110.133 raw.githubusercontent.com
         188.114.96.2 packages-cf.termux.dev
         185.199.109.153 termux.dev
         EOF
 
-    - name: Wait for DNS
-      run: |
-        cat /system/etc/hosts
-        echo "Checking DNS readiness..."
-        max_attempts=$((2 * 60 / 5))
-        attempt=1
-        while [ $attempt -le $max_attempts ]; do
-            if curl -Is https://termux.dev > /dev/null; then
-                echo "DNS is ready and HTTP request to Termux was successful."
-                break
-            else
-                if [ $attempt -eq $max_attempts ]; then
-                    echo "Timeout reached. DNS is still not ready."
-                    exit 1
-                fi
-                attempt=$((attempt + 1))
-                sleep 5
-            fi
-        done
-
-    - name: Download and execute Metasploit install script
-      run: |
-        curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
-        chmod +x metasploit.sh
-        su $(id -un 1000 )
-        bash metasploit.sh
+    - run: docker run -v ./hosts:/system/etc/hosts -d -t termux/termux-docker:x86_64
+    - run: |
+        id=$(docker ps -alq)
+        docker exec -u system $id bash -c "curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh"
+        docker exec -u system $id bash -c "chmod +x metasploit.sh"
+        docker exec -u system $id bash -c "bash metasploit.sh"
+        # docker cp $id:/data/data/com.termux/files/home/target/release/deno deno
