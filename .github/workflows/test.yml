@@ -41,11 +41,11 @@ jobs:
 
         # Display the contents of the output file
         cat "$output_file"
-    - name: Upload hosts file
-      uses: actions/upload-artifact@v3
-      with:
-        name: hosts-file
-        path: hosts_output.txt
+    # - name: Upload hosts file
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: hosts-file
+    #     path: hosts_output.txt
 
   setup-metasploit:
     needs: checkout-dns
@@ -53,7 +53,7 @@ jobs:
     container:
       image: termux/termux-docker:x86_64
 
-    # steps:
+    steps:
     # - name: Download hosts file
     #   uses: actions/download-artifact@v3
     #   with:
@@ -68,8 +68,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        # cat hosts_output.txt >> /etc/hosts
-        tee -a /etc/hosts > /dev/null << EOF
+        sudo tee -a /etc/hosts > /dev/null << EOF
         5.75.242.194 packages.termux.dev
         185.199.110.133 raw.githubusercontent.com
         188.114.96.2 packages-cf.termux.dev
