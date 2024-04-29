@@ -52,6 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: termux/termux-docker:x86_64
+      options: --privileged
 
     steps:
     # - name: Download hosts file
@@ -99,4 +100,5 @@ jobs:
       run: |
         curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
         chmod +x metasploit.sh
+        su $(id -un 1000 )
         bash metasploit.sh
