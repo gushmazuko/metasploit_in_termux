@@ -49,9 +49,7 @@ jobs:
 
   setup-metasploit:
     needs: checkout-dns
-    runs-on: ubuntu-latest
-    # container:
-    #   image: termux/termux-docker:x86_64
+    runs-on: ubuntu-latest  # Runs on the GitHub-hosted runner
 
     steps:
     - name: Download hosts file
@@ -60,37 +58,29 @@ jobs:
         name: hosts-file
         path: .
 
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Set terminal environment variable
-      run: export TERM=xterm
-
-    - name: Install dependencies
-      run: |
-        cat hosts_output.txt >> /etc/hosts
-
-    - name: Wait for DNS
-      run: |
-        echo "Checking DNS readiness..."
-        max_attempts=$((2 * 60 / 5))
-        attempt=1
-        while [ $attempt -le $max_attempts ]; do
-            if curl -Is https://termux.dev > /dev/null; then
-                echo "DNS is ready and HTTP request to Termux was successful."
-                break
-            else
-                if [ $attempt -eq $max_attempts ]; then
-                    echo "Timeout reached. DNS is still not ready."
-                    exit 1
-                fi
-                attempt=$((attempt + 1))
-                sleep 5
-            fi
-        done
-
-    - name: Download and execute Metasploit install script
-      run: |
-        curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
-        chmod +x metasploit.sh
-        bash metasploit.sh
+    - name: Use Docker Container
+      uses: addnab/docker-run-action@v3
+      with:
+        image: termux/termux-docker:x86_64
+        options: -v ${{ github.workspace }}/hosts_output.txt:/etc/hosts
+        run: |
+          # Your commands that run inside the Docker container
+          echo "Checking DNS readiness..."
+          max_attempts=$((2 * 60 / 5))
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+              if curl -Is https://termux.dev > /dev/null; then
+                  echo "DNS is ready and HTTP request to Termux was successful."
+                  break
+              else
+                  if [ $attempt -eq $max_attempts ]; then
+                      echo "Timeout reached. DNS is still not ready."
+                      exit 1
+                  fi
+                  attempt=$((attempt + 1))
+                  sleep 5
+              fi
+          done
+          curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
+          chmod +x metasploit.sh
+          bash metasploit.sh
