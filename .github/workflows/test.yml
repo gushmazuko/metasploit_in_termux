@@ -15,8 +15,8 @@ jobs:
     steps:
     - name: Wait for DNS
       run: |
-        apt update
-        apt install -y dnsutils
+        sudo apt update
+        sudo apt install -y dnsutils
 
         # List of hostnames
         hostnames=("packages.termux.dev" "raw.githubusercontent.com" "packages-cf.termux.dev" "termux.dev")
