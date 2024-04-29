@@ -1,25 +1,96 @@
-name: container
-on: push
+name: Setup Metasploit in Termux Docker
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+  pull_request:
+    branches:
+      - main
+      - feature/*
 
 jobs:
-  node-docker:
+  checkout-dns: # nslookup github.com outside of docker
     runs-on: ubuntu-latest
-    # container:
-    #   image: termux/termux-docker:x86_64
-    #   options: --user root --entrypoint /entrypoint_root.sh
     steps:
-         - name: test docker
-           run: |
-              docker run -it --rm ubuntu bash
-              apt update
-              apt install curl -y
-         - name: check resolv
-           run: cat $PREFIX/etc/resolv.conf
-         - name: wait dns
-           run: |
-              ping -c 4 1.1.1.1
-         - name: Log the node version
-           run: |
-              uname -a
-              curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
-              bash metasploit.sh
+    - name: Wait for DNS
+      run: |
+        apt update
+        apt install -y dnsutils
+
+        # List of hostnames
+        hostnames=("packages.termux.dev" "raw.githubusercontent.com" "packages-cf.termux.dev" "termux.dev")
+
+        # Output file
+        output_file="hosts_output.txt"
+
+        # Clear or create the output file
+        > "$output_file"
+
+        # Loop through each hostname
+        for hostname in "${hostnames[@]}"; do
+            # Perform nslookup and extract the IP address
+            ip=$(nslookup -type=A $hostname | grep -m 1 'Address: ' | awk '{ print $2 }')
+            if [ -n "$ip" ]; then
+                # Append to file in hosts file format
+                echo "$ip $hostname" >> "$output_file"
+            else
+                echo "No IP found for $hostname" >> "$output_file"
+            fi
+        done
+
+        # Display the contents of the output file
+        cat "$output_file"
+    - name: Upload hosts file
+      uses: actions/upload-artifact@v3
+      with:
+        name: hosts-file
+        path: hosts_output.txt
+
+  setup-metasploit:
+    needs: checkout-dns
+    runs-on: ubuntu-latest
+    container:
+      image: termux/termux-docker:x86_64
+
+    steps:
+    - name: Download hosts file
+      uses: actions/download-artifact@v3
+      with:
+        name: hosts-file
+        path: .
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set terminal environment variable
+      run: export TERM=xterm
+
+    - name: Install dependencies
+      run: |
+        cat hosts_output.txt >> /etc/hosts
+
+    - name: Wait for DNS
+      run: |
+        echo "Checking DNS readiness..."
+        max_attempts=$((2 * 60 / 5))
+        attempt=1
+        while [ $attempt -le $max_attempts ]; do
+            if curl -Is https://termux.dev > /dev/null; then
+                echo "DNS is ready and HTTP request to Termux was successful."
+                break
+            else
+                if [ $attempt -eq $max_attempts ]; then
+                    echo "Timeout reached. DNS is still not ready."
+                    exit 1
+                fi
+                attempt=$((attempt + 1))
+                sleep 5
+            fi
+        done
+
+    - name: Download and execute Metasploit install script
+      run: |
+        curl -O -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/feature/github-actions/metasploit.sh
+        chmod +x metasploit.sh
+        bash metasploit.sh
