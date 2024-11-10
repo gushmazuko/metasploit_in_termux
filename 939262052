@@ -8,27 +8,7 @@
 
 In order to have updated Termux:
 - **Purge all data** of Termux in Android Settings
-- Uninstall and reinstall latest Termux version from [F-Droid](https://f-droid.org/en/packages/com.termux/) (Version on Play Store is outdated)
-- Then launch Termux to initialization, close it (force stop, not swap)
-- Reopen and follow the instructions below
-
-### Auto
-```bash
-source <(curl -fsSL https://kutt.it/msf)
-```
-
-### Manual
-```bash
-pkg install wget
-
-wget https://github.com/gushmazuko/metasploit_in_termux/raw/master/metasploit.sh
-
-
-chmod +x metasploit.sh
-
-./metasploit.sh
-```
-
+- Uninstall and reinstall latest Termux version from [F-Droid](
 ## Launch metasploit
 After installation start Metasploit using the command:
 ```bash
