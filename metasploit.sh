@@ -35,8 +35,13 @@ source <(echo "c3Bpbm5lcj0oICd8JyAnLycgJy0nICdcJyApOwoKY291bnQoKXsKICBzcGluICYKI
 
 # Dependencies Installation
 center "* Dependencies installation..."
-pkg update -y
-pkg upgrade -y -o Dpkg::Options::="--force-confnew"
+# Skip mirror selection if sources.list is already configured (for CI)
+if ! grep -q "packages.termux.dev" /data/data/com.termux/files/usr/etc/apt/sources.list 2>/dev/null; then
+  pkg update -y
+else
+  apt update -y
+fi
+DEBIAN_FRONTEND=noninteractive pkg upgrade -y -o Dpkg::Options::="--force-confnew"
 pkg install -y binutils python autoconf bison clang coreutils curl findutils apr apr-util postgresql openssl readline libffi libgmp libpcap libsqlite libgrpc libtool libxml2 libxslt ncurses make ncurses-utils ncurses git wget unzip zip tar termux-tools termux-elf-cleaner pkg-config git ruby -o Dpkg::Options::="--force-confnew"
 python3 -m pip install requests
 
