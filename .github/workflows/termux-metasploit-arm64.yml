@@ -46,7 +46,8 @@ jobs:
           # Resolve each to an IPv4 address and write in hosts format
           missing=()
           for d in "${domains[@]}"; do
-            ip4=$(dig +short A "$d" | head -n1 || true)
+            # Get only IPv4 addresses, filter out CNAME responses
+            ip4=$(dig +short A "$d" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -n1 || true)
             if [[ -n "$ip4" ]]; then
               echo "$ip4 $d" >> "$HOSTS"
             else
@@ -96,7 +97,7 @@ jobs:
             # Use primary Termux mirror (bypasses pkg mirror selection)
             echo "deb https://packages.termux.dev/apt/termux-main stable main" > /data/data/com.termux/files/usr/etc/apt/sources.list
             apt update -y
-            DEBIAN_FRONTEND=noninteractive apt install -y curl git -o Dpkg::Options::="--force-confnew"
+            DEBIAN_FRONTEND=noninteractive apt install -y curl git libssh2 -o Dpkg::Options::="--force-confnew"
           '
 
       - name: Run metasploit installer from this repo
