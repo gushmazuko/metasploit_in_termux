@@ -1,5 +1,6 @@
 name: Setup Metasploit in Termux Docker
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
