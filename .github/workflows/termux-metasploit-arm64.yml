@@ -75,7 +75,7 @@ jobs:
           set -euxo pipefail
           docker pull termux/termux-docker:aarch64
           docker rm -f termux || true
-          docker run -d --name termux \
+          docker run -d -t --name termux \
             --security-opt seccomp=unconfined \
             -v "$PWD/termux-hosts:/system/etc/hosts:ro" \
             -v "$GITHUB_WORKSPACE:/workspace:ro" \
@@ -87,6 +87,9 @@ jobs:
       - name: Seed apt mirror & update inside Termux
         run: |
           set -euxo pipefail
+          # Ensure container is running
+          docker start termux || true
+          sleep 2
           id=$(docker ps -q -f name=termux)
           docker exec -u system "$id" bash -lc '
             set -eux
