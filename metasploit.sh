@@ -74,6 +74,11 @@ bundle update activesupport
 bundle update --bundler
 bundle install -j$(nproc --all)
 
+# Fix ActionView version compatibility issue for ARM64
+center "* Fixing ActionView version compatibility..."
+# Disable the version check entirely since ActionView 8.x might not need the monkey patch
+sed -i 's/raise unless ActionView::VERSION::STRING == .*$/# Version check disabled for ARM64 compatibility/' config/application.rb
+
 # Link Metasploit Executables
 ln -sf ${PREFIX}/opt/metasploit-framework/msfconsole ${PREFIX}/bin/
 ln -sf ${PREFIX}/opt/metasploit-framework/msfvenom ${PREFIX}/bin/

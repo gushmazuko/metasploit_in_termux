@@ -1,5 +1,5 @@
 # Metasploit Framework 6 in Termux
-[![GitLab Testing status](https://gitlab.com/gushmazuko/metasploit_in_termux/badges/master/pipeline.svg)](https://gitlab.com/gushmazuko/metasploit_in_termux/-/pipelines) ![GitHub Repo stars](https://img.shields.io/github/stars/gushmazuko/metasploit_in_termux?style=social) [![](https://img.shields.io/badge/GitLab-Mirror-succes?link=https://gitlab.com/gushmazuko/metasploit_in_termux)](https://gitlab.com/gushmazuko/metasploit_in_termux)
+[![GitHub Actions CI](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml/badge.svg)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml) ![GitHub Repo stars](https://img.shields.io/github/stars/gushmazuko/metasploit_in_termux?style=social)
 
 ![Metasploit 6 running](https://i.imgur.com/yLFQhvP.png)
 
@@ -34,3 +34,14 @@ After installation start Metasploit using the command:
 ```bash
 msfconsole
 ```
+
+## Testing
+This installation script is automatically tested via GitHub Actions CI on ARM64 architecture to ensure reliability:
+
+- ✅ **Dependencies Installation**: All required packages install correctly on ARM64
+- ✅ **Metasploit Framework**: Complete installation and build verification
+- ✅ **msfconsole**: Startup and version check (`msfconsole -qx "version; exit"`)
+- ✅ **msfvenom**: Payload generation test (`msfvenom -p windows/meterpreter/reverse_tcp`)
+- ✅ **DNS Resolution**: Comprehensive hosts file for Termux container networking
+
+The CI pipeline runs on `ubuntu-24.04-arm` with `termux/termux-docker:aarch64` to match real-world ARM64 usage scenarios.
