@@ -1,4 +1,4 @@
-name: Metasploit on Termux (ARM64, DNS-bypass)
+iname: Metasploit on Termux (ARM64, DNS-bypass)
 
 on:
   workflow_dispatch:
