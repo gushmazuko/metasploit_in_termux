@@ -35,6 +35,24 @@ After installation start Metasploit using the command:
 msfconsole
 ```
 
+## Update
+The installer saves itself as the `msf-setup` command, so updating is quick (no full reinstall):
+```bash
+msf-setup --update
+```
+
+## Uninstall
+```bash
+msf-setup --uninstall          # removes Metasploit, symlinks and the installer
+msf-setup --uninstall --purge  # also deletes ~/.msf4 (loot, history, database!)
+```
+
+## Optional database
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh) --with-db
+```
+Initializes a dedicated postgres in `~/.msf4/db` on port 5433 — your existing Termux postgres, if any, is never touched.
+
 ## Testing
 Every change to the installer is verified on GitHub Actions against the official `termux/termux-docker:aarch64` image on ARM64 runners:
 
