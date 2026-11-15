@@ -16,6 +16,22 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -q
+          sudo apt-get install -y -q shellcheck
+
+      - name: Lint metasploit.sh
+        run: shellcheck -S warning metasploit.sh
+
   test-aarch64:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 90
@@ -95,6 +111,30 @@ jobs:
             msfvenom -p windows/meterpreter/reverse_tcp lhost=192.168.0.1 lport=4444 -f exe -o my_payload.exe
             ls -la my_payload.exe
             file my_payload.exe || true
+          '
+
+      - name: Test msf-setup --update
+        run: |
+          set -euxo pipefail
+          docker exec -u system termux bash -lc 'msf-setup --update' |& tee update.log
+
+      - name: Smoke test msfconsole after update
+        run: |
+          set -euxo pipefail
+          docker exec -u system termux bash -lc 'msfconsole -qx "version; exit"' | tee msfconsole-after-update.txt
+
+      - name: Test msf-setup --uninstall and assert clean removal
+        run: |
+          set -euxo pipefail
+          docker exec -u system termux bash -lc '
+            set -eux
+            msf-setup --uninstall
+            [ ! -e /data/data/com.termux/files/usr/opt/metasploit-framework ]
+            [ ! -e /data/data/com.termux/files/usr/opt/msf-termux-installer ]
+            ! command -v msfconsole
+            ! command -v msfvenom
+            ! command -v msf-setup
+            echo "uninstall left no leftovers"
           '
 
       - name: Collect install log and native gem build errors
