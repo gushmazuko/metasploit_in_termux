@@ -103,6 +103,17 @@ align_default_gem() {
 }
 align_default_gem date
 
+# MSF's gemspec pins date exactly ('3.4.1' — "temporarily pinned until 3.5
+# can be tested"), which forces bundler to revert the lockfile alignment
+# above ("Fetching date 3.4.1 (was 3.5.1)", verified on CI). Relax the pin
+# so the Ruby-4.0 default (3.5.1) can satisfy it.
+if grep -q "add_runtime_dependency 'date', '" metasploit-framework.gemspec; then
+  sed -i "s/\(spec.add_runtime_dependency 'date', '\)[^']*/\1>= 3.4.1/" metasploit-framework.gemspec
+  echo "Relaxed date pin in metasploit-framework.gemspec"
+else
+  echo "NOTE: date pin not found in gemspec (upstream may have relaxed it already)"
+fi
+
 # Run everything under the bundler shipped with Ruby 4.0, not the lockfile's
 # BUNDLED WITH (2.5.22): that version predates Ruby 4.0 default-gem handling
 # and msfconsole dies with "You have already activated date 3.5.1, but your
