@@ -1,77 +1,51 @@
-name: Metasploit on Termux (ARM64, DNS-bypass)
+name: Metasploit on Termux (ARM64)
 
 on:
   workflow_dispatch:
+  schedule:
+    # Weekly: catches upstream drift — Termux Ruby bumps, gem releases,
+    # Metasploit itself. The installer clones MSF master, so breakage here
+    # means users on real phones break too.
+    - cron: "0 6 * * 0"
   push:
-    branches: [ "main", "master", "feature/**" ]
+    branches: [ "main", "master" ]
+    paths:
+      - "metasploit.sh"
+      - ".github/workflows/termux-metasploit-arm64.yml"
   pull_request:
-    branches: [ "main", "master", "feature/**" ]
+    branches: [ "main", "master" ]
 
 jobs:
   test-aarch64:
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 30
+    timeout-minutes: 90
 
     steps:
-      - name: Checkout repo (use this branch's metasploit.sh)
+      - name: Checkout repo (test THIS code, not master)
         uses: actions/checkout@v4
 
       - name: Install DNS tools on host
         run: |
           set -euxo pipefail
-          sudo apt-get update
-          sudo apt-get install -y dnsutils
+          sudo apt-get update -q
+          sudo apt-get install -y -q dnsutils
 
-      - name: Generate static DNS for Termux (/system/etc/hosts, IPv4 only)
-        id: gen-hosts
-        shell: bash
+      - name: Generate static DNS hosts for Termux container
         run: |
           set -euxo pipefail
           HOSTS="termux-hosts"
           : > "$HOSTS"
-
-          # Domains your installer typically needs
-          domains=(
-            packages.termux.dev
-            raw.githubusercontent.com
-            packages-cf.termux.dev
-            termux.dev
-            github.com
-            rubygems.org
-            index.rubygems.org
-            pypi.org
-            files.pythonhosted.org
-          )
-
-          # Resolve each to an IPv4 address and write in hosts format
-          missing=()
-          for d in "${domains[@]}"; do
-            # Get only IPv4 addresses, filter out CNAME responses
-            ip4=$(dig +short A "$d" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -n1 || true)
+          for d in packages.termux.dev packages-cf.termux.dev termux.dev raw.githubusercontent.com github.com rubygems.org index.rubygems.org; do
+            ip4=$(dig +short A "$d" | grep -E '^[0-9]+(\.[0-9]+){3}$' | head -n1 || true)
             if [[ -n "$ip4" ]]; then
               echo "$ip4 $d" >> "$HOSTS"
             else
-              missing+=("$d")
+              echo "WARN: no IPv4 for $d"
             fi
           done
-
-          echo "---- $HOSTS ----"
           cat "$HOSTS"
 
-          # Fail early if we couldn't resolve critical domains on the host
-          critical=(packages.termux.dev raw.githubusercontent.com github.com rubygems.org)
-          for c in "${critical[@]}"; do
-            if ! grep -q " $c$" "$HOSTS"; then
-              echo "ERROR: Could not resolve critical domain: $c"
-              exit 1
-            fi
-          done
-
-          if [[ ${#missing[@]} -gt 0 ]]; then
-            echo "WARN: Could not resolve some domains on host: ${missing[*]}"
-          fi
-
-      - name: Start Termux (aarch64) with static hosts and repo mounted
+      - name: Start Termux container
         run: |
           set -euxo pipefail
           docker pull termux/termux-docker:aarch64
@@ -81,56 +55,62 @@ jobs:
             -v "$PWD/termux-hosts:/system/etc/hosts:ro" \
             -v "$GITHUB_WORKSPACE:/workspace:ro" \
             termux/termux-docker:aarch64
-          # give runit/env a moment to settle
-          sleep 3
-          docker ps -a
+          sleep 5
+          docker ps
 
-      - name: Seed apt mirror & update inside Termux
+      - name: Seed apt sources and update
         run: |
           set -euxo pipefail
-          # Ensure container is running
-          docker start termux || true
-          sleep 2
-          id=$(docker ps -q -f name=termux)
-          docker exec -u system "$id" bash -lc '
-            set -eux
-            # Use primary Termux mirror (bypasses pkg mirror selection)
+          docker exec -u system termux bash -lc '
+            set -x
             echo "deb https://packages.termux.dev/apt/termux-main stable main" > /data/data/com.termux/files/usr/etc/apt/sources.list
             apt update -y
             DEBIAN_FRONTEND=noninteractive apt install -y curl git libssh2 -o Dpkg::Options::="--force-confnew"
           '
 
-      - name: Run metasploit installer from this repo
+      - name: Run metasploit.sh
         run: |
           set -euxo pipefail
-          id=$(docker ps -q -f name=termux)
-          docker exec -u system "$id" bash -lc '
-            set -eux
-            # copy script from checked-out repo into $HOME
+          docker exec -u system termux bash -lc '
+            set -x
             cp /workspace/metasploit.sh "$HOME/metasploit.sh"
             chmod +x "$HOME/metasploit.sh"
-            # run and tee to a log for artifacting on failure
-            "$HOME/metasploit.sh" |& tee "$HOME/metasploit_install.log"
-          '
+            "$HOME/metasploit.sh" 2>&1 | tee "$HOME/metasploit_install.log"
+            rc="${PIPESTATUS[0]}"
+            echo "installer finished with exit code $rc"
+            exit "$rc"
+          ' |& tee metasploit-install.log
 
-      - name: Smoke test msfconsole (non-interactive)
+      - name: Smoke test msfconsole
         run: |
           set -euxo pipefail
-          id=$(docker ps -q -f name=termux)
-          docker exec -u system "$id" bash -lc 'msfconsole -qx "version; exit"' | tee msfconsole-version.txt
+          docker exec -u system termux bash -lc 'msfconsole -qx "version; exit"' | tee msfconsole-version.txt
 
-      - name: Test msfvenom payload generation
+      - name: Smoke test msfvenom
         run: |
           set -euxo pipefail
-          id=$(docker ps -q -f name=termux)
-          docker exec -u system "$id" bash -lc '
+          docker exec -u system termux bash -lc '
             set -eux
-            echo "Testing msfvenom payload generation..."
+            cd /data/data/com.termux/files/usr/tmp
             msfvenom -p windows/meterpreter/reverse_tcp lhost=192.168.0.1 lport=4444 -f exe -o my_payload.exe
-            echo "Payload generation completed successfully!"
             ls -la my_payload.exe
-            file my_payload.exe || echo "file command not available, but payload exists"
+            file my_payload.exe || true
           '
+
+      - name: Collect install log and native gem build errors
+        if: failure()
+        run: |
+          set -x
+          docker cp termux:/data/data/com.termux/files/home/metasploit_install.log . || true
+          mkdir -p gem-build-logs
+          docker exec -u system termux bash -lc \
+            'find /data/data/com.termux/files/usr/lib/ruby/gems -name gem_make.out -o -name mkmf.log 2>/dev/null | head -50' \
+            > gemlog-list.txt || true
+          cat gemlog-list.txt || true
+          while IFS= read -r f; do
+            [[ -z "$f" ]] && continue
+            docker cp "termux:$f" "gem-build-logs/$(echo "$f" | tr '/' '_')" || true
+          done < gemlog-list.txt
 
       - name: Upload logs on failure
         if: failure()
@@ -139,6 +119,9 @@ jobs:
           name: termux-aarch64-logs
           path: |
             termux-hosts
+            metasploit-install.log
+            msfconsole-version.txt
+            gem-build-logs/
 
       - name: Cleanup
         if: always()
