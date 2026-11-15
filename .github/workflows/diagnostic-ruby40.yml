@@ -105,7 +105,9 @@ jobs:
             cp /workspace/metasploit.sh "$HOME/metasploit.sh"
             chmod +x "$HOME/metasploit.sh"
             "$HOME/metasploit.sh" 2>&1 | tee "$HOME/metasploit_install.log"
-            echo "installer finished with exit code ${PIPESTATUS[0]}"
+            rc="${PIPESTATUS[0]}"
+            echo "installer finished with exit code $rc"
+            exit "$rc"
           ' |& tee diagnostic-install.log
 
       - name: Record environment after install

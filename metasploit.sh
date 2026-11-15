@@ -88,8 +88,13 @@ fi
 termux-fix-shebang "${PREFIX}/bin/bundle" "${PREFIX}/bin/bundler" 2>/dev/null || true
 
 # Native gem build flags, registered where bundler will use them.
+# nokogiri: system libxml2/libxslt + clang warning suppressions.
 bundle config set --local build.nokogiri \
   "--use-system-libraries --with-cflags=-Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-incompatible-function-pointer-types"
+# sqlite3: use Termux's libsqlite. Without this, the gem's extconf tries to
+# compile its packaged sqlite and requires mini_portile2 (not installed),
+# failing with LoadError (verified on CI, Nov 2026).
+bundle config set --local build.sqlite3 "--enable-system-libraries"
 
 # Pre-build nokogiri pinned to the lockfile version (same flags). Plain ERE
 # parsing — grep -P is not guaranteed on all Termux builds.
