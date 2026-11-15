@@ -78,13 +78,14 @@ git clone https://github.com/rapid7/metasploit-framework.git --depth=1 "${PREFIX
 center "* Installation..."
 cd "${PREFIX}/opt/metasploit-framework"
 
-# Pin bundler to the version the lockfile expects. If the newest bundler is
-# allowed to start `bundle install`, it auto-installs the locked version and
-# restarts itself, breaking the `bundle` binstub on Termux (verified on CI).
-BUNDLER_VERSION="$(sed -n '/^BUNDLED WITH$/{n;s/^[[:space:]]*//;p}' Gemfile.lock)"
-if [ -n "$BUNDLER_VERSION" ]; then
-  gem install bundler -v "$BUNDLER_VERSION"
-fi
+# Run everything under the bundler shipped with Ruby 4.0, not the lockfile's
+# BUNDLED WITH (2.5.22): that version predates Ruby 4.0 default-gem handling
+# and msfconsole dies with "You have already activated date 3.5.1, but your
+# Gemfile requires date 3.4.1" (verified on CI). `version system` also stops
+# bundler from auto-installing the locked version mid-install and re-exec'ing
+# itself, which breaks the `bundle` binstub shebang on Termux.
+gem install bundler
+bundle config set --local version system
 termux-fix-shebang "${PREFIX}/bin/bundle" "${PREFIX}/bin/bundler" 2>/dev/null || true
 
 # Native gem build flags, registered where bundler will use them.
@@ -103,13 +104,8 @@ if [ -n "$NOKOGIRI_VERSION" ]; then
   gem install nokogiri -v "$NOKOGIRI_VERSION" -- --use-system-libraries --with-cflags="-Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-incompatible-function-pointer-types"
 fi
 
-# Single, deterministic install. The `_x.y.z_` prefix makes the binstub
-# activate exactly the locked bundler version (no auto-switch, no re-exec).
-if [ -n "$BUNDLER_VERSION" ]; then
-  bundle "_${BUNDLER_VERSION}_" install -j"$(nproc --all)"
-else
-  bundle install -j"$(nproc --all)"
-fi
+# Single, deterministic install.
+bundle install -j"$(nproc --all)"
 
 # Fix shebangs (#!/usr/bin/env ruby does not work on Android) and link
 # Metasploit executables
