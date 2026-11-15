@@ -14,7 +14,7 @@ In order to have updated Termux:
 
 ### Auto
 ```bash
-source <(curl -fsSL https://kutt.it/msf)
+bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
 ```
 
 ### Manual
@@ -36,12 +36,12 @@ msfconsole
 ```
 
 ## Testing
-This installation script is automatically tested via GitHub Actions CI on ARM64 architecture to ensure reliability:
+Every change to the installer is verified on GitHub Actions against the official `termux/termux-docker:aarch64` image on ARM64 runners:
 
 - ✅ **Dependencies Installation**: All required packages install correctly on ARM64
-- ✅ **Metasploit Framework**: Complete installation and build verification
+- ✅ **Metasploit Framework**: Complete bundle install on current Termux (Ruby 4.x)
 - ✅ **msfconsole**: Startup and version check (`msfconsole -qx "version; exit"`)
 - ✅ **msfvenom**: Payload generation test (`msfvenom -p windows/meterpreter/reverse_tcp`)
-- ✅ **DNS Resolution**: Comprehensive hosts file for Termux container networking
+- 📄 On failure, CI uploads the full install log and native gem build logs (`gem_make.out` / `mkmf.log`)
 
-The CI pipeline runs on `ubuntu-24.04-arm` with `termux/termux-docker:aarch64` to match real-world ARM64 usage scenarios.
+A scheduled weekly run also catches upstream drift (Ruby, gems, Metasploit itself).
