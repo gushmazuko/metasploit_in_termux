@@ -51,7 +51,7 @@ msf-setup --uninstall --purge  # also deletes ~/.msf4 (loot, history, database!)
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh) --with-db
 ```
-Initializes a dedicated postgres in `~/.msf4/db` on port 5433 — your existing Termux postgres, if any, is never touched.
+Initializes a dedicated postgres in `~/.msf4/db` on port 5433 — your existing Termux postgres, if any, is never touched. The database does not auto-start after a reboot — restart it with `pg_ctl -D ~/.msf4/db -o "-p 5433" start`.
 
 ## Testing
 Every change to the installer is verified on GitHub Actions against the official `termux/termux-docker:aarch64` image on ARM64 runners:
