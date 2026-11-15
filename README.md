@@ -1,65 +1,70 @@
-# Metasploit Framework 6 in Termux
-[![GitHub Actions CI](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml/badge.svg)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml) ![GitHub Repo stars](https://img.shields.io/github/stars/gushmazuko/metasploit_in_termux?style=social)
+# Metasploit Framework in Termux
 
-![Metasploit 6 running](https://i.imgur.com/yLFQhvP.png)
+Installs and maintains [Metasploit Framework](https://github.com/rapid7/metasploit-framework) on a **non-rooted Android phone**, entirely inside [Termux](https://termux.dev).
 
-## How to Install
-## Before
+[![CI](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml/badge.svg)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Stars](https://img.shields.io/github/stars/gushmazuko/metasploit_in_termux?style=social)
 
-In order to have updated Termux:
-- **Purge all data** of Termux in Android Settings
-- Uninstall and reinstall latest Termux version from [F-Droid](https://f-droid.org/en/packages/com.termux/) (Version on Play Store is outdated)
-- Then launch Termux to initialization, close it (force stop, not swap)
-- Reopen and follow the instructions below
+![Metasploit running in Termux](https://i.imgur.com/yLFQhvP.png)
 
-### Auto
+## Requirements
+
+- **Termux from [F-Droid](https://f-droid.org/en/packages/com.termux/) or [GitHub Releases](https://github.com/termux/termux-app/releases)** — the Play Store build is not supported
+- **aarch64 device** (ARMv8 — CI-verified on the official Termux image with current Ruby)
+- ~2 GB free space and 20–60 minutes (native gems are compiled on-device)
+- Stable network (Termux mirrors, GitHub, RubyGems)
+
+> **Old or previously-broken Termux setup?** Purge Termux data in Android Settings, reinstall from F-Droid, open it once, force-stop, then proceed. A stale package set is the most common source of install failures.
+
+## Install
+
+One command:
+
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
 ```
 
-### Manual
+Or manually:
+
 ```bash
-pkg install wget
-
-wget https://github.com/gushmazuko/metasploit_in_termux/raw/master/metasploit.sh
-
-
+curl -fsSL -o metasploit.sh https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh
 chmod +x metasploit.sh
-
 ./metasploit.sh
 ```
 
-## Launch metasploit
-After installation start Metasploit using the command:
-```bash
-msfconsole
-```
+The installer verifies that `msfconsole` actually boots before reporting success.
 
-## Update
-The installer saves itself as the `msf-setup` command, so updating is quick (no full reinstall):
-```bash
-msf-setup --update
-```
+## Usage
 
-## Uninstall
-```bash
-msf-setup --uninstall          # removes Metasploit, symlinks and the installer
-msf-setup --uninstall --purge  # also deletes ~/.msf4 (loot, history, database!)
-```
+| Command | What it does |
+|---|---|
+| `msfconsole` | Start Metasploit |
+| `msfvenom` | Generate payloads |
+| `msfrpcd` | Start the RPC daemon |
+| `msf-setup --update` | Update Metasploit in place |
+| `msf-setup --uninstall` | Remove Metasploit, symlinks and the installer |
+| `msf-setup --uninstall --purge` | Also delete `~/.msf4` — **loot, history, database** |
 
-## Optional database
+`msf-setup` is installed locally as a command; the same flags also work directly from the one-liner (e.g. `... metasploit.sh --update`).
+
+### Optional database
+
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh) --with-db
 ```
-Initializes a dedicated postgres in `~/.msf4/db` on port 5433 — your existing Termux postgres, if any, is never touched. The database does not auto-start after a reboot — restart it with `pg_ctl -D ~/.msf4/db -o "-p 5433" start`.
 
-## Testing
-Every change to the installer is verified on GitHub Actions against the official `termux/termux-docker:aarch64` image on ARM64 runners:
+Initializes a dedicated PostgreSQL in `~/.msf4/db` on port 5433 (msfdb-style). An existing Termux PostgreSQL cluster, if you have one, is never touched. The database does not auto-start after a reboot — restart it with `pg_ctl -D ~/.msf4/db -o "-p 5433" start`.
 
-- ✅ **Dependencies Installation**: All required packages install correctly on ARM64
-- ✅ **Metasploit Framework**: Complete bundle install on current Termux (Ruby 4.x)
-- ✅ **msfconsole**: Startup and version check (`msfconsole -qx "version; exit"`)
-- ✅ **msfvenom**: Payload generation test (`msfvenom -p windows/meterpreter/reverse_tcp`)
-- 📄 On failure, CI uploads the full install log and native gem build logs (`gem_make.out` / `mkmf.log`)
+## What the installer does
 
-A scheduled weekly run also catches upstream drift (Ruby, gems, Metasploit itself).
+Full transparency, since this script installs packages and modifies your Termux prefix:
+
+| Item | Detail |
+|---|---|
+| Installs | Termux packages (clang, ruby, postgresql, libxml2, …) and upgrades existing ones, then Metasploit via `bundle install` |
+| Framework location | `$PREFIX/opt/metasploit-framework` (shallow clone of upstream master) |
+| Gems | Isolated in `vendor/bundle` **inside** the framework dir — only bundler itself goes to the system gem dir |
+| Commands | `msfconsole`, `msfvenom`, `msfrpcd`, `msf-setup` symlinked into `$PREFIX/bin` |
+| Local patches to upstream | `termux-fix-shebang` on the three binaries (Android has no `/usr/bin/env`); Ruby-4.0 default-gem alignment (`date`, `stringio`) and a relaxed date pin in the gemspec — re-applied automatically by `--update` |
+| Data | `~/.msf4` is created by Metasploit itself (and by `--with-db`) and is only removed with `--uninstall --purge` |
