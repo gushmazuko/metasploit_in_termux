@@ -113,10 +113,20 @@ jobs:
             file my_payload.exe || true
           '
 
-      - name: Test msf-setup --update
+      - name: Test update via the piped path (bash <(cat metasploit.sh))
         run: |
           set -euxo pipefail
-          docker exec -u system termux bash -lc 'msf-setup --update' |& tee update.log
+          docker exec -u system termux bash -lc 'bash <(cat /workspace/metasploit.sh) --update' |& tee piped-update.log
+
+      - name: Assert piped install left a complete msf-setup
+        run: |
+          set -euxo pipefail
+          docker exec -u system termux bash -lc '
+            set -eux
+            [ -s /data/data/com.termux/files/usr/opt/msf-termux-installer/metasploit.sh ]
+            msf-setup --help >/dev/null
+            wc -c /data/data/com.termux/files/usr/opt/msf-termux-installer/metasploit.sh
+          '
 
       - name: Smoke test msfconsole after update
         run: |
@@ -131,9 +141,12 @@ jobs:
             msf-setup --uninstall
             [ ! -e /data/data/com.termux/files/usr/opt/metasploit-framework ]
             [ ! -e /data/data/com.termux/files/usr/opt/msf-termux-installer ]
-            ! command -v msfconsole
-            ! command -v msfvenom
-            ! command -v msf-setup
+            for b in msfconsole msfvenom msf-setup; do
+              p="/data/data/com.termux/files/usr/bin/$b"
+              if [ -e "$p" ] || [ -L "$p" ]; then
+                echo "LEFTOVER: $p"; exit 1
+              fi
+            done
             echo "uninstall left no leftovers"
           '
 
@@ -144,7 +157,7 @@ jobs:
           docker cp termux:/data/data/com.termux/files/home/metasploit_install.log . || true
           mkdir -p gem-build-logs
           docker exec -u system termux bash -lc \
-            'find /data/data/com.termux/files/usr/lib/ruby/gems -name gem_make.out -o -name mkmf.log 2>/dev/null | head -50' \
+            'find /data/data/com.termux/files/usr/lib/ruby/gems /data/data/com.termux/files/usr/opt/metasploit-framework/vendor/bundle \( -name gem_make.out -o -name mkmf.log \) 2>/dev/null | head -50' \
             > gemlog-list.txt || true
           cat gemlog-list.txt || true
           while IFS= read -r f; do
@@ -160,7 +173,9 @@ jobs:
           path: |
             termux-hosts
             metasploit-install.log
+            piped-update.log
             msfconsole-version.txt
+            msfconsole-after-update.txt
             gem-build-logs/
 
       - name: Cleanup
