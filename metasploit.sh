@@ -78,6 +78,24 @@ git clone https://github.com/rapid7/metasploit-framework.git --depth=1 "${PREFIX
 center "* Installation..."
 cd "${PREFIX}/opt/metasploit-framework"
 
+# Ruby 4.0 ships newer default gems than MSF's lockfile pins. RubyGems
+# activates the default `date` while loading gem specifications, before
+# msfconsole's bundler/setup runs, so a lockfile pinned to an older date
+# fails with "You have already activated date 3.5.1, but your Gemfile
+# requires date 3.4.1" — under every bundler version. Align the lockfile
+# with the shipped default; when both sides match, no bundler can conflict.
+# Extend the list if another default gem conflicts the same way.
+align_default_gem() {
+  local name="$1" default_version locked_version
+  default_version="$(ruby -e "require '${name}'; puts Gem.loaded_specs['${name}'].version" 2>/dev/null || true)"
+  locked_version="$(sed -n "s/^    ${name} (\(.*\))\$/\1/p" Gemfile.lock | head -n1)"
+  if [ -n "$default_version" ] && [ -n "$locked_version" ] && [ "$default_version" != "$locked_version" ]; then
+    echo "Aligning lockfile ${name} ${locked_version} -> ${default_version} (Ruby 4.0 default gem)"
+    sed -i "s/^    ${name} (${locked_version})/    ${name} (${default_version})/" Gemfile.lock
+  fi
+}
+align_default_gem date
+
 # Run everything under the bundler shipped with Ruby 4.0, not the lockfile's
 # BUNDLED WITH (2.5.22): that version predates Ruby 4.0 default-gem handling
 # and msfconsole dies with "You have already activated date 3.5.1, but your
