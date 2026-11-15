@@ -87,10 +87,17 @@ cd "${PREFIX}/opt/metasploit-framework"
 # Extend the list if another default gem conflicts the same way.
 align_default_gem() {
   local name="$1" default_version locked_version
-  default_version="$(ruby -e "require '${name}'; puts Gem.loaded_specs['${name}'].version" 2>/dev/null || true)"
+  case "$name" in
+    date) default_version="$(ruby -e 'require "date"; puts Date::VERSION' 2>/dev/null || true)" ;;
+    *) default_version="" ;;
+  esac
+  # Accept only plain numeric dotted versions — a failed probe must never
+  # write garbage into the lockfile.
+  case "$default_version" in ''|*[!0-9.]*) default_version="" ;; esac
   locked_version="$(sed -n "s/^    ${name} (\(.*\))\$/\1/p" Gemfile.lock | head -n1)"
+  echo "default-gem check: ${name} default=${default_version:-unknown} locked=${locked_version:-absent}"
   if [ -n "$default_version" ] && [ -n "$locked_version" ] && [ "$default_version" != "$locked_version" ]; then
-    echo "Aligning lockfile ${name} ${locked_version} -> ${default_version} (Ruby 4.0 default gem)"
+    echo "Aligning lockfile ${name} ${locked_version} -> ${default_version}"
     sed -i "s/^    ${name} (${locked_version})/    ${name} (${default_version})/" Gemfile.lock
   fi
 }
