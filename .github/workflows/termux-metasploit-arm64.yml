@@ -2,11 +2,6 @@ name: Metasploit on Termux (ARM64)
 
 on:
   workflow_dispatch:
-  schedule:
-    # Weekly: catches upstream drift — Termux Ruby bumps, gem releases,
-    # Metasploit itself. The installer clones MSF master, so breakage here
-    # means users on real phones break too.
-    - cron: "0 6 * * 0"
   push:
     branches: [ "main", "master" ]
     paths:
