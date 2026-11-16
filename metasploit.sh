@@ -12,7 +12,7 @@
 # After install the script saves a copy of itself and links it as
 # `msf-setup`, so the commands above are also available offline.
 #
-# Compatibility notes (verified on CI, Nov 2026 — Termux ruby 4.0.9 / clang 21.1.8):
+# Compatibility notes (verified on CI, Nov 2026 – Termux ruby 4.0.9 / clang 21.1.8):
 # - nokogiri builds cleanly from source with system libxml2/libxslt
 # - bundler must run with `version system`: the lockfile's BUNDLED WITH (2.5.22)
 #   predates Ruby 4.0 default-gem handling, and bundler's auto-switch on it
@@ -24,7 +24,7 @@
 
 # If sourced from a real file, re-execute as a script so strict mode cannot
 # kill the interactive shell. Piping into `source` cannot work: bash drains
-# the pipe while parsing, so re-exec would run an empty script — refuse it.
+# the pipe while parsing, so re-exec would run an empty script – refuse it.
 if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
   if [[ -f "${BASH_SOURCE[0]}" ]]; then
     ( exec bash "${BASH_SOURCE[0]}" "$@" )
@@ -36,7 +36,7 @@ if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
 fi
 
 set -Eeuo pipefail
-trap 'echo -e "\n\033[31m[!] Operation failed near line $LINENO — see the error above.\033[0m" >&2' ERR
+trap 'echo -e "\n\033[31m[!] Operation failed near line $LINENO – see the error above.\033[0m" >&2' ERR
 trap 'termux-wake-unlock 2>/dev/null || true' EXIT
 
 PREFIX="${PREFIX:-/data/data/com.termux/files/usr}"
@@ -81,7 +81,7 @@ Usage:
 Options:
                   install Metasploit (default action)
   --with-db       also initialize an optional postgres database (~/.msf4/db,
-                  port 5433, msf database) — never touches an existing one
+                  port 5433, msf database) – never touches an existing one
   --update        update an existing installation in place
   --uninstall     remove Metasploit, its symlinks and this installer
   --purge         with --uninstall: also delete ~/.msf4 (loot, history, db!)
@@ -100,8 +100,8 @@ NOKOGIRI_CFLAGS="-Wno-implicit-function-declaration -Wno-deprecated-declarations
 
 # Save a copy of this script so `msf-setup` works offline later. When run as
 # a file, copy it. When piped (`bash <(curl ...)`), ${BASH_SOURCE} is a pipe
-# that bash has already drained by the time we execute — copying it yields a
-# truncated file (verified) — so fetch a fresh copy from the canonical URL
+# that bash has already drained by the time we execute – copying it yields a
+# truncated file (verified) – so fetch a fresh copy from the canonical URL
 # and validate it instead.
 self_install() {
   mkdir -p "$INSTALLER_DIR"
@@ -142,7 +142,7 @@ step_fetch() {
   git clone https://github.com/rapid7/metasploit-framework.git --depth=1 "$MSF_DIR"
 }
 
-# For updates: hard-reset to upstream master. A plain `git pull` would fail —
+# For updates: hard-reset to upstream master. A plain `git pull` would fail –
 # this installer intentionally modifies tracked files (gemspec pin, lockfile
 # alignment) and upstream moves Gemfile.lock weekly. Vendor gems and .bundle
 # are untracked, so they survive the reset.
@@ -156,7 +156,7 @@ step_reset_to_master() {
 # Ruby 4.0 ships newer default gems than MSF's lockfile pins. RubyGems
 # activates the default `date` while loading gem specifications, before
 # msfconsole's bundler/setup runs, so a lockfile pinned to an older date
-# fails with "You have already activated date 3.5.1..." — under every
+# fails with "You have already activated date 3.5.1..." – under every
 # bundler version. Align the lockfile with the shipped default.
 align_default_gem() {
   local name="$1" default_version locked_version
@@ -165,7 +165,7 @@ align_default_gem() {
     stringio) default_version="$(ruby -e 'require "stringio"; puts StringIO::VERSION' 2>/dev/null || true)" ;;
     *) default_version="" ;;
   esac
-  # Accept only plain numeric dotted versions — a failed probe must never
+  # Accept only plain numeric dotted versions – a failed probe must never
   # write garbage into the lockfile.
   case "$default_version" in ''|*[!0-9.]*) default_version="" ;; esac
   locked_version="$(sed -n "s/^    ${name} (\(.*\))\$/\1/p" Gemfile.lock | head -n1)"
@@ -176,17 +176,17 @@ align_default_gem() {
   fi
 }
 
-# MSF's gemspec pins date exactly ('3.4.1' — "Temporarily pinned until 3.5
+# MSF's gemspec pins date exactly ('3.4.1' – "Temporarily pinned until 3.5
 # can be tested"), which forces bundler to revert the lockfile alignment
 # ("Fetching date 3.4.1 (was 3.5.1)", verified on CI). Relax the pin so the
 # Ruby-4.0 default (3.5.1) can satisfy it. Fail loudly if the line changed
-# shape upstream and the relax did not apply — a silent no-op here means a
+# shape upstream and the relax did not apply – a silent no-op here means a
 # broken msfconsole at runtime.
 relax_date_pin() {
   if grep -q "add_runtime_dependency 'date', '" metasploit-framework.gemspec; then
     sed -i "s/\(add_runtime_dependency 'date', '\)[0-9][^']*/\1>= 3.4.1/" metasploit-framework.gemspec
     if grep -q "add_runtime_dependency 'date', '[0-9]" metasploit-framework.gemspec; then
-      die "date pin in metasploit-framework.gemspec was not recognized and could not be relaxed — upstream changed it; please open an issue"
+      die "date pin in metasploit-framework.gemspec was not recognized and could not be relaxed – upstream changed it; please open an issue"
     fi
     echo "Relaxed date pin in metasploit-framework.gemspec"
   else
@@ -234,7 +234,7 @@ step_fixups() {
 boot_probe() {
   center "* Verifying msfconsole boots..."
   (cd "$MSF_DIR" && ./msfconsole -qx "version; exit" >/dev/null) \
-    || die "msfconsole failed to boot — see errors above; the install is incomplete"
+    || die "msfconsole failed to boot – see errors above; the install is incomplete"
 }
 
 # Optional postgres for msf: dedicated datadir and port, msfdb-style, so a
@@ -315,7 +315,7 @@ cmd_uninstall() {
   if [ -f "${HOME}/.msf4/db/PG_VERSION" ]; then
     pg_ctl -D "${HOME}/.msf4/db" stop -m fast >/dev/null 2>&1 || true
   fi
-  # Remove msf symlinks only if they actually point into our framework dir —
+  # Remove msf symlinks only if they actually point into our framework dir –
   # other installers create the same names.
   local b target
   for b in msfconsole msfvenom msfrpcd; do

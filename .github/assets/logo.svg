@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" role="img" aria-label="Metasploit in Termux">
+  <rect x="6" y="6" width="188" height="188" rx="44" fill="#0d1117" stroke="#2f81f7" stroke-width="4"/>
+  <path d="M58 68 L100 100 L58 132" fill="none" stroke="#58a6ff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="114" y="114" width="36" height="14" rx="7" fill="#3fb950"/>
+</svg>
