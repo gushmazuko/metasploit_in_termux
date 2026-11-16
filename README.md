@@ -3,76 +3,62 @@
 
 # Metasploit in Termux
 
-**Full [Metasploit Framework](https://github.com/rapid7/metasploit-framework) on a non-rooted Android phone — one command.**
+**Full [Metasploit Framework](https://github.com/rapid7/metasploit-framework) on a non-rooted Android phone – one command.**
 
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Termux-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://termux.dev)
-[![Arch](https://img.shields.io/badge/arch-aarch64-2f81f7?style=for-the-badge)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml)
-[![Ruby](https://img.shields.io/badge/Ruby-4.x-CC342D?style=for-the-badge&logo=ruby&logoColor=white)](https://www.ruby-lang.org)
-[![CI](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml/badge.svg?style=for-the-badge)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml)
-[![License](https://img.shields.io/badge/license-MIT-8b6cff?style=for-the-badge)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/gushmazuko/metasploit_in_termux?style=for-the-badge&color=f8b84e)](https://github.com/gushmazuko/metasploit_in_termux/stargazers)
+[![Platform](https://img.shields.io/badge/platform-Termux%20%7C%20Android-3DDC84?style=flat-square&logo=android&logoColor=white)](https://termux.dev)
+[![Arch](https://img.shields.io/badge/arch-aarch64-2f81f7?style=flat-square)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml)
+[![Ruby](https://img.shields.io/badge/Ruby-4.x-CC342D?style=flat-square&logo=ruby&logoColor=white)](https://www.ruby-lang.org)
+[![CI](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml/badge.svg?style=flat-square)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml)
+[![License](https://img.shields.io/badge/license-MIT-8b6cff?style=flat-square)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/gushmazuko/metasploit_in_termux?style=flat-square&color=f8b84e)](https://github.com/gushmazuko/metasploit_in_termux/stargazers)
 
 `bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)`
 
 </div>
 
-## Requirements
+## Installation
 
-- **Termux from [F-Droid](https://f-droid.org/en/packages/com.termux/) or [GitHub Releases](https://github.com/termux/termux-app/releases)** — the Play Store build is not supported
-- **aarch64 device** (ARMv8 — CI-verified on the official Termux image with current Ruby)
-- ~2 GB free space and 20–60 minutes (native gems are compiled on-device)
-- Stable network (Termux mirrors, GitHub, RubyGems)
+| Needed | Why |
+|---|---|
+| Termux from [F-Droid](https://f-droid.org/en/packages/com.termux/) or [GitHub](https://github.com/termux/termux-app/releases) | the Play Store build is not supported |
+| aarch64 phone (ARMv8) | the platform CI verifies every change on |
+| ~2 GB free, 20–60 min | ruby gems with native code are compiled on-device |
+| fresh Termux data | stale packages are the #1 cause of failed installs: purge Termux data in Android Settings, reinstall, open once, force-stop |
 
-> **Old or previously-broken Termux setup?** Purge Termux data in Android Settings, reinstall from F-Droid, open it once, force-stop, then proceed. A stale package set is the most common source of install failures.
-
-## Install
-
-One command:
+Then:
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)
 ```
 
-Or manually:
+That is the whole install. It compiles ~250 gems, patches what Android needs patched, and only prints "Installation complete" after `msfconsole` has actually booted once.
 
-```bash
-curl -fsSL -o metasploit.sh https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh
-chmod +x metasploit.sh
-./metasploit.sh
-```
+## Commands
 
-The installer verifies that `msfconsole` actually boots before reporting success.
-
-## Usage
-
-| Command | What it does |
+| Command | Purpose |
 |---|---|
-| `msfconsole` | Start Metasploit |
-| `msfvenom` | Generate payloads |
-| `msfrpcd` | Start the RPC daemon |
-| `msf-setup --update` | Update Metasploit in place |
-| `msf-setup --uninstall` | Remove Metasploit, symlinks and the installer |
-| `msf-setup --uninstall --purge` | Also delete `~/.msf4` — **loot, history, database** |
+| `msfconsole` | run Metasploit |
+| `msfvenom` | build payloads |
+| `msfrpcd` | run the RPC daemon |
+| `msf-setup --update` | pull the latest Metasploit and rebuild in place |
+| `msf-setup --uninstall` | remove Metasploit, its symlinks and the installer |
+| `msf-setup --uninstall --purge` | also wipe `~/.msf4` (loot, history, database) |
 
-`msf-setup` is installed locally as a command; the same flags also work directly from the one-liner (e.g. `... metasploit.sh --update`).
+`msf-setup` is copied to `$PREFIX/bin` during install and works offline; the same flags work straight from the curl one-liner too.
 
-### Optional database
+**Optional database:** add `--with-db` to the install command for a dedicated PostgreSQL in `~/.msf4/db` (port 5433, never touches a cluster you already run). It does not survive a reboot by itself: restart it with `pg_ctl -D ~/.msf4/db -o "-p 5433" start`.
 
-```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh) --with-db
-```
+## How it works
 
-Initializes a dedicated PostgreSQL in `~/.msf4/db` on port 5433 (msfdb-style). An existing Termux PostgreSQL cluster, if you have one, is never touched. The database does not auto-start after a reboot — restart it with `pg_ctl -D ~/.msf4/db -o "-p 5433" start`.
+The script is one auditable file. Everything it does:
 
-## What the installer does
-
-Full transparency, since this script installs packages and modifies your Termux prefix:
-
-| Item | Detail |
+| Step | What happens |
 |---|---|
-| Installs | Termux packages (clang, ruby, postgresql, libxml2, …) and upgrades existing ones, then Metasploit via `bundle install` |
-| Framework location | `$PREFIX/opt/metasploit-framework` (shallow clone of upstream master) |
-| Gems | Isolated in `vendor/bundle` **inside** the framework dir — only bundler itself goes to the system gem dir |
-| Commands | `msfconsole`, `msfvenom`, `msfrpcd`, `msf-setup` symlinked into `$PREFIX/bin` |
-| Local patches to upstream | `termux-fix-shebang` on the three binaries (Android has no `/usr/bin/env`); Ruby-4.0 default-gem alignment (`date`, `stringio`) and a relaxed date pin in the gemspec — re-applied automatically by `--update` |
-| Data | `~/.msf4` is created by Metasploit itself (and by `--with-db`) and is only removed with `--uninstall --purge` |
+| packages | installs the toolchain (clang, ruby, postgresql, libxml2 and friends) via `pkg` |
+| source | shallow-clones upstream Metasploit master into `$PREFIX/opt/metasploit-framework` |
+| gems | installed into `vendor/bundle` inside that folder; only bundler itself lands in the system gem dir |
+| android fixes | `termux-fix-shebang` on the msf binaries (no `/usr/bin/env` on Android), Ruby 4.x default-gem alignment for `date` and `stringio`, relaxed `date` pin in the gemspec |
+| links | `msfconsole`, `msfvenom`, `msfrpcd`, `msf-setup` symlinked into `$PREFIX/bin` |
+| data | `~/.msf4` belongs to Metasploit; deleted only by `--uninstall --purge` |
+
+`--update` re-applies the same steps after `git reset --hard` to upstream master, so the patches never go stale.
