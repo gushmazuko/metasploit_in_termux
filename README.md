@@ -1,12 +1,20 @@
-# Metasploit Framework in Termux
+<div align="center">
+  <img src=".github/assets/logo.svg" width="140" alt="Metasploit in Termux" />
 
-Installs and maintains [Metasploit Framework](https://github.com/rapid7/metasploit-framework) on a **non-rooted Android phone**, entirely inside [Termux](https://termux.dev).
+# Metasploit in Termux
 
-[![CI](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml/badge.svg)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Stars](https://img.shields.io/github/stars/gushmazuko/metasploit_in_termux?style=social)
+**Full [Metasploit Framework](https://github.com/rapid7/metasploit-framework) on a non-rooted Android phone — one command.**
 
-![Metasploit running in Termux](https://i.imgur.com/yLFQhvP.png)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Termux-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://termux.dev)
+[![Arch](https://img.shields.io/badge/arch-aarch64-2f81f7?style=for-the-badge)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml)
+[![Ruby](https://img.shields.io/badge/Ruby-4.x-CC342D?style=for-the-badge&logo=ruby&logoColor=white)](https://www.ruby-lang.org)
+[![CI](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml/badge.svg?style=for-the-badge)](https://github.com/gushmazuko/metasploit_in_termux/actions/workflows/termux-metasploit-arm64.yml)
+[![License](https://img.shields.io/badge/license-MIT-8b6cff?style=for-the-badge)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/gushmazuko/metasploit_in_termux?style=for-the-badge&color=f8b84e)](https://github.com/gushmazuko/metasploit_in_termux/stargazers)
+
+`bash <(curl -fsSL https://raw.githubusercontent.com/gushmazuko/metasploit_in_termux/master/metasploit.sh)`
+
+</div>
 
 ## Requirements
 
